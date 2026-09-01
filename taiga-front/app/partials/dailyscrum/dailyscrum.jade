@@ -1,0 +1,258 @@
+//- app/modules/dailyscrum/dailyscrum.jade
+//- Template principal para Daily Meeting
+
+div.wrapper(
+    ng-controller="DailyScrumController as ctrl"
+    ng-init="section='daily-scrum'"
+)
+    tg-project-menu
+
+    sidebar.menu-secondary.sidebar(tg-daily-scrum-menu)
+        
+    section.main.daily-scrum
+        header
+            include ../includes/components/mainTitle
+            
+        .daily-meeting-wrapper
+            // Selector de fecha - visible para todos
+            .date-selector-wrapper
+                .date-controls
+                    button.btn-icon(
+                        ng-click="previousDay()"
+                        title="{{ 'DAILY.PREVIOUS_DAY' | translate }}"
+                        ng-disabled="loading"
+                    )
+                        tg-svg(svg-icon="icon-arrow-left")
+                    
+                    .date-display
+                        input(
+                            type="date"
+                            ng-model="selectedDate"
+                            ng-change="loadDailyMeeting()"
+                            max="{{ maxDate }}"
+                            class="date-input"
+                            ng-if="isScrumMaster"
+                        )
+                        span.date-text {{ selectedDate | date:'fullDate' }}
+                        span.today-badge(ng-if="isToday()") HOY
+                    
+                    button.btn-icon(
+                        ng-click="nextDay()"
+                        ng-disabled="isToday() || loading"
+                        title="{{ 'DAILY.NEXT_DAY' | translate }}"
+                    )
+                        tg-svg(svg-icon="icon-arrow-right")
+                
+                .actions-wrapper
+                    button.btn.btn-secondary(
+                        ng-click="refreshData()"
+                        ng-if="isScrumMaster"
+                        ng-disabled="loading"
+                        title="Actualizar datos"
+                    )
+                        tg-svg(svg-icon="icon-refresh")
+                        span Actualizar
+                    
+                    button.btn.btn-primary(
+                        ng-click="exportToExcel()"
+                        ng-if="isScrumMaster && dailyMeeting"
+                        title="{{ 'DAILY.EXPORT_EXCEL' | translate }}"
+                    )
+                        tg-svg(svg-icon="icon-download")
+                        span {{ 'DAILY.EXPORT' | translate }}
+            
+            // Loading
+            .loading-spinner(ng-if="loading")
+                img(src="/#{v}/svg/spinner-circle.svg", alt="loading")
+                span {{ 'COMMON.LOADING' | translate }}
+            
+            // Error message
+            .error-message(ng-if="error && !loading")
+                tg-svg(svg-icon="icon-error")
+                p {{ error }}
+                button.btn.btn-primary(
+                    ng-if="isScrumMaster && isToday() && !dailyMeeting"
+                    ng-click="createTodayMeeting()"
+                )
+                    span {{ 'DAILY.CREATE_TODAY_MEETING' | translate }}
+            
+            // Vista para Development Team - Formulario
+            .daily-form-section(ng-if="!loading && isDevelopmentTeam && !hasResponded && dailyMeeting")
+                h2 {{ 'DAILY.YOUR_UPDATE' | translate }}
+                
+                form.daily-form(name="dailyForm" ng-submit="submitDailyResponse()")
+                    .form-field
+                        label {{ 'DAILY.QUESTION_YESTERDAY' | translate }}
+                        textarea(
+                            ng-model="dailyResponse.yesterday_work"
+                            required
+                            rows="4"
+                            placeholder="{{ 'DAILY.PLACEHOLDER_YESTERDAY' | translate }}"
+                        )
+                    
+                    .form-field
+                        label {{ 'DAILY.QUESTION_TODAY' | translate }}
+                        textarea(
+                            ng-model="dailyResponse.today_plan"
+                            required
+                            rows="4"
+                            placeholder="{{ 'DAILY.PLACEHOLDER_TODAY' | translate }}"
+                        )
+                    
+                    .form-field
+                        label {{ 'DAILY.QUESTION_BLOCKERS' | translate }}
+                        textarea(
+                            ng-model="dailyResponse.blockers"
+                            rows="3"
+                            placeholder="{{ 'DAILY.PLACEHOLDER_BLOCKERS' | translate }}"
+                        )
+                    
+                    .form-field
+                        label {{ 'DAILY.MOOD_LABEL' | translate }}
+                        .mood-selector
+                            label.mood-option(
+                                ng-repeat="mood in moodOptions"
+                                ng-class="{'selected': dailyResponse.mood === mood.value}"
+                            )
+                                input(
+                                    type="radio"
+                                    name="mood"
+                                    ng-model="dailyResponse.mood"
+                                    value="{{ mood.value }}"
+                                )
+                                span.mood-emoji {{ mood.emoji }}
+                                span.mood-text {{ mood.text | translate }}
+                    
+                    .form-actions
+                        button.btn-primary(
+                            type="submit"
+                            ng-disabled="dailyForm.$invalid || submitting"
+                        )
+                            span(ng-if="!submitting") {{ 'DAILY.SUBMIT' | translate }}
+                            span(ng-if="submitting") {{ 'DAILY.SUBMITTING' | translate }}
+            
+            // Vista de respuesta enviada
+            .daily-response-sent(ng-if="!loading && isDevelopmentTeam && hasResponded && myResponse")
+                .success-icon
+                    tg-svg(svg-icon="icon-check-circle")
+                
+                h2 {{ 'DAILY.RESPONSE_SENT' | translate }}
+                
+                .response-summary
+                    .response-item
+                        h4 {{ 'DAILY.QUESTION_YESTERDAY' | translate }}
+                        p {{ myResponse.yesterday_work }}
+                    
+                    .response-item
+                        h4 {{ 'DAILY.QUESTION_TODAY' | translate }}
+                        p {{ myResponse.today_plan }}
+                    
+                    .response-item(ng-if="myResponse.blockers")
+                        h4 {{ 'DAILY.QUESTION_BLOCKERS' | translate }}
+                        p.blockers-text {{ myResponse.blockers }}
+                    
+                    .response-item
+                        h4 {{ 'DAILY.MOOD_LABEL' | translate }}
+                        .mood-display
+                            span.mood-emoji {{ getMoodEmoji(myResponse.mood) }}
+                            span {{ getMoodText(myResponse.mood) }}
+                
+                button.btn-secondary(
+                    ng-click="editResponse()"
+                ) {{ 'DAILY.EDIT_RESPONSE' | translate }}
+            
+            // Vista para Scrum Master/PO/Stakeholder - Resumen
+            .team-summary(ng-if="!loading && (isScrumMaster || isProductOwner || isStakeholder) && dailyMeeting")
+                .summary-header
+                    h2 {{ 'DAILY.TEAM_SUMMARY' | translate }}
+                    
+                    .summary-stats
+                        .stat-card
+                            .stat-number {{ dailyMeeting.participants_count || 0 }}
+                            .stat-label {{ 'DAILY.RESPONSES' | translate }}
+                        
+                        .stat-card
+                            .stat-number {{ dailyMeeting.pending_members ? dailyMeeting.pending_members.length : 0 }}
+                            .stat-label {{ 'DAILY.PENDING' | translate }}
+                        
+                        .stat-card.has-blockers(ng-if="blockersCount > 0")
+                            .stat-number {{ blockersCount }}
+                            .stat-label {{ 'DAILY.BLOCKERS' | translate }}
+                
+                // Gráfico de mood
+                .mood-chart(ng-if="dailyMeeting.team_mood_summary && getTotalResponses() > 0")
+                    h3 {{ 'DAILY.TEAM_MOOD' | translate }}
+                    .mood-bars
+                        .mood-bar(
+                            ng-repeat="mood in moodOptions"
+                            ng-if="dailyMeeting.team_mood_summary[mood.value] > 0"
+                        )
+                            .bar-container
+                                .bar-fill(
+                                    style="height: {{ getMoodPercentage(mood.value) }}%"
+                                    ng-class="'mood-' + mood.value"
+                                )
+                            .bar-label
+                                span.emoji {{ mood.emoji }}
+                                span.count {{ dailyMeeting.team_mood_summary[mood.value] || 0 }}
+                
+                // Respuestas del equipo
+                .team-responses(ng-if="dailyMeeting.responses && dailyMeeting.responses.length > 0")
+                    h3 {{ 'DAILY.TEAM_RESPONSES' | translate }}
+                    
+                    .response-card(
+                        ng-repeat="response in dailyMeeting.responses | orderBy:'-created_at'"
+                        ng-class="{'has-blockers': response.has_blockers}"
+                    )
+                        .card-header
+                            .user-info
+                                .avatar-wrapper
+                                    img.avatar(
+                                        tg-avatar="response.user"
+                                        alt="{{ response.user.full_name_display }}"
+                                    )
+                                .user-details
+                                    .user-name {{ response.user.full_name_display || response.user.full_name || response.user.username || response.user.email || 'Usuario' }}
+                                    .response-time {{ response.created_at | date:'short' }}
+                            
+                            .mood-indicator
+                                span.mood-emoji {{ getMoodEmoji(response.mood) }}
+                        
+                        .card-content
+                            .response-section
+                                h5 {{ 'DAILY.YESTERDAY_SHORT' | translate }}
+                                p {{ response.yesterday_work }}
+                            
+                            .response-section
+                                h5 {{ 'DAILY.TODAY_SHORT' | translate }}
+                                p {{ response.today_plan }}
+                            
+                            .response-section.blockers-section(ng-if="response.blockers")
+                                h5
+                                    tg-svg(svg-icon="icon-warning")
+                                    span {{ 'DAILY.BLOCKERS_SHORT' | translate }}
+                                p {{ response.blockers }}
+                
+                // Miembros pendientes
+                .pending-members(ng-if="dailyMeeting.pending_members && dailyMeeting.pending_members.length > 0")
+                    h3 {{ 'DAILY.PENDING_MEMBERS' | translate }}
+                    
+                    .pending-grid
+                        .pending-member(ng-repeat="member in dailyMeeting.pending_members")
+                            .avatar-wrapper
+                                img.avatar(
+                                    tg-avatar="member"
+                                    alt="{{ member.full_name_display }}"
+                                )
+                            span.member-name {{ member.full_name_display || member.full_name || member.username || member.email || 'Usuario' }}
+            
+            // Vista vacía
+            .empty-state(ng-if="!loading && !dailyMeeting && !error")
+                .empty-icon
+                    tg-svg(svg-icon="icon-daily-empty")
+                h3 {{ 'DAILY.NO_MEETING_TODAY' | translate }}
+                p(ng-if="!isScrumMaster") {{ 'DAILY.CONTACT_SM' | translate }}
+                button.btn-primary(
+                    ng-if="isScrumMaster && isToday()"
+                    ng-click="createTodayMeeting()"
+                ) {{ 'DAILY.CREATE_MEETING' | translate }}

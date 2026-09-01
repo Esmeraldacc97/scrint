@@ -1,0 +1,5 @@
+● taiga.service - taiga_back
+     Loaded: loaded (/etc/systemd/system/taiga.service; enabled; vendor preset: enabled)
+     Active: activating (auto-restart) (Result: exit-code) since Mon 2024-11-11 10:29:32 CST; 1s ago
+    Process: 10584 ExecStart=/home/taiga/.virtualenvs/taiga_venv/bin/gunicorn --workers 4 --timeout 60 -b 127.0.0.1:8001 taiga.wsgi [0;1;31m(code=exited, status=203/EXEC)[0m
+   Main PID: 10584 (code=exited, status=203/EXEC)

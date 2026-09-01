@@ -1,0 +1,338 @@
+//- app/partials/sprintretrospective/sprintretrospective.jade
+//- Template principal para Sprint Retrospective
+
+div.wrapper(
+    ng-controller="SprintRetrospectiveController as ctrl"
+    ng-init="section='sprint-retrospective'"
+)
+    tg-project-menu
+
+    sidebar.menu-secondary.sidebar(tg-sprint-retrospective-menu)
+        
+    section.main.sprint-retrospective
+        header
+            include ../includes/components/mainTitle
+            
+        .sprint-retrospective-wrapper
+            // Sprint selector
+            .sprint-selector-wrapper
+                .sprint-selector
+                    label {{ 'SPRINT_RETROSPECTIVE.SELECT_SPRINT' | translate }}
+                    select.sprint-dropdown(
+                        ng-model="selectedSprintId"
+                        ng-change="ctrl.loadSprintRetrospective()"
+                        ng-options="sprint.id as sprint.name for sprint in sprints"
+                        ng-disabled="loading"
+                    )
+                        option(value="" disabled) {{ 'SPRINT_RETROSPECTIVE.CHOOSE_SPRINT' | translate }}
+                
+                .actions-wrapper
+                    button.btn.btn-primary(
+                        ng-click="ctrl.exportToExcel()"
+                        ng-if="selectedSprintId && isScrumMaster"
+                        title="{{ 'SPRINT_RETROSPECTIVE.EXPORT_EXCEL' | translate }}"
+                    )
+                        tg-svg(svg-icon="icon-download")
+                        span {{ 'SPRINT_RETROSPECTIVE.EXPORT' | translate }}
+            
+            // Loading
+            .loading-spinner(ng-if="loading")
+                img(src="/#{v}/svg/spinner-circle.svg", alt="loading")
+                span {{ 'COMMON.LOADING' | translate }}
+            
+            // Error message
+            .error-message(ng-if="error && !loading")
+                tg-svg(svg-icon="icon-error")
+                p {{ error }}
+            
+            // No sprint selected
+            .empty-state(ng-if="!loading && !selectedSprintId")
+                .empty-icon
+                    tg-svg(svg-icon="icon-sprint-empty")
+                h3 {{ 'SPRINT_RETROSPECTIVE.NO_SPRINT_SELECTED' | translate }}
+                p {{ 'SPRINT_RETROSPECTIVE.SELECT_SPRINT_MESSAGE' | translate }}
+            
+            // Sprint content
+            .sprint-content(ng-if="!loading && selectedSprintId && sprintData")
+                // Sprint header
+                .sprint-header
+                    .sprint-info
+                        h2 {{ sprintData.name }} - {{ 'SPRINT_RETROSPECTIVE.TITLE' | translate }}
+                        .sprint-project {{ sprintData.project_name }}
+                    
+                    .sprint-metrics(ng-if="retrospective")
+                        .metric
+                            span.label {{ 'SPRINT_RETROSPECTIVE.VELOCITY_ACHIEVED' | translate }}:
+                            span.value {{ retrospective.velocity_achieved || 0 }}
+                        .metric(ng-if="retrospective.commitment_accuracy")
+                            span.label {{ 'SPRINT_RETROSPECTIVE.COMMITMENT_ACCURACY' | translate }}:
+                            span.value {{ retrospective.completion_percentage }}
+                
+                // Team Mood Selector (only for SM)
+                .team-mood-section(ng-if="isScrumMaster || !retrospective")
+                    h3 {{ 'SPRINT_RETROSPECTIVE.TEAM_MOOD_TITLE' | translate }}
+                    .mood-selector
+                        label.mood-option(
+                            ng-repeat="mood in moodOptions"
+                            ng-class="{'selected': ctrl.isTeamMoodSelected(mood.value)}"
+                            ng-click="ctrl.setTeamMood(mood.value)"
+                        )
+                            span.emoji {{ mood.emoji }}
+                            span.text {{ mood.text | translate }}
+                
+                // Tabs
+                .retro-tabs
+                    .tab(
+                        ng-click="ctrl.setActiveTab('whatWentWell')"
+                        ng-class="{'active': ctrl.isActiveTab('whatWentWell')}"
+                    ) 
+                        tg-svg(svg-icon="icon-thumbs-up")
+                        span {{ 'SPRINT_RETROSPECTIVE.TAB_WENT_WELL' | translate }}
+                    
+                    .tab(
+                        ng-click="ctrl.setActiveTab('toImprove')"
+                        ng-class="{'active': ctrl.isActiveTab('toImprove')}"
+                    ) 
+                        tg-svg(svg-icon="icon-bulb")
+                        span {{ 'SPRINT_RETROSPECTIVE.TAB_TO_IMPROVE' | translate }}
+                    
+                    .tab(
+                        ng-click="ctrl.setActiveTab('actionItems')"
+                        ng-class="{'active': ctrl.isActiveTab('actionItems')}"
+                    ) 
+                        tg-svg(svg-icon="icon-task")
+                        span {{ 'SPRINT_RETROSPECTIVE.TAB_ACTION_ITEMS' | translate }}
+                    
+                    .tab(
+                        ng-click="ctrl.setActiveTab('previousActions')"
+                        ng-class="{'active': ctrl.isActiveTab('previousActions')}"
+                        ng-if="previousActions && previousActions.length > 0"
+                    ) 
+                        tg-svg(svg-icon="icon-history")
+                        span {{ 'SPRINT_RETROSPECTIVE.TAB_PREVIOUS_ACTIONS' | translate }}
+                
+                // Tab content
+                .tab-content
+                    // What went well tab
+                    .went-well-content(ng-show="isActiveTab('whatWentWell')")
+                        h3 
+                            tg-svg(svg-icon="icon-thumbs-up")
+                            span {{ 'SPRINT_RETROSPECTIVE.WHAT_WENT_WELL_TITLE' | translate }}
+                        
+                        // Add new item (only SM - always show if SM)
+                        .add-item-section(ng-if="isScrumMaster")
+                            .input-group
+                                input(
+                                    type="text"
+                                    ng-model="forms.newWentWell"
+                                    placeholder="{{ 'SPRINT_RETROSPECTIVE.ADD_WENT_WELL_PLACEHOLDER' | translate }}"
+                                    ng-keyup="$event.keyCode == 13 && forms.newWentWell && ctrl.addWentWell()"
+                                )
+                                button.btn.btn-small(
+                                    type="button"
+                                    ng-click="ctrl.addWentWell()"
+                                    ng-disabled="!forms.newWentWell"
+                                ) {{ 'SPRINT_RETROSPECTIVE.ADD' | translate }}
+                        
+                        // Items list
+                        .retro-items-list
+                            .retro-item(
+                                ng-repeat="item in retrospectiveForm.went_well track by $index"
+                                ng-class="{'has-votes': item.votes > 0}"
+                            )
+                                .item-content
+                                    .item-text {{ item.text }}
+                                    .item-actions
+                                        button.vote-btn(
+                                            type="button"
+                                            ng-click="ctrl.voteItem('went_well', $index)"
+                                            ng-class="{'voted': ctrl.hasUserVoted('went_well', $index)}"
+                                            ng-disabled="ctrl.hasUserVoted('went_well', $index)"
+                                            title="{{ 'SPRINT_RETROSPECTIVE.VOTE_FOR_THIS' | translate }}"
+                                        )
+                                            tg-svg(svg-icon="icon-thumb-up")
+                                        .vote-count {{ item.votes || 0 }}
+                                        button.remove-btn(
+                                            type="button"
+                                            ng-if="isScrumMaster && !retrospective"
+                                            ng-click="ctrl.removeWentWell($index)"
+                                            title="{{ 'SPRINT_RETROSPECTIVE.REMOVE' | translate }}"
+                                        )
+                                            tg-svg(svg-icon="icon-close")
+                        
+                        .empty-message(ng-if="retrospectiveForm.went_well.length === 0")
+                            p {{ 'SPRINT_RETROSPECTIVE.NO_ITEMS_YET' | translate }}
+                    
+                    // To improve tab
+                    .to-improve-content(ng-show="isActiveTab('toImprove')")
+                        h3 
+                            tg-svg(svg-icon="icon-bulb")
+                            span {{ 'SPRINT_RETROSPECTIVE.TO_IMPROVE_TITLE' | translate }}
+                        
+                        // Add new item (only SM - always show if SM)
+                        .add-item-section(ng-if="isScrumMaster")
+                            .input-group
+                                input(
+                                    type="text"
+                                    ng-model="forms.newToImprove"
+                                    placeholder="{{ 'SPRINT_RETROSPECTIVE.ADD_TO_IMPROVE_PLACEHOLDER' | translate }}"
+                                    ng-keyup="$event.keyCode == 13 && forms.newToImprove && ctrl.addToImprove()"
+                                )
+                                button.btn.btn-small(
+                                    type="button"
+                                    ng-click="ctrl.addToImprove()"
+                                    ng-disabled="!forms.newToImprove"
+                                ) {{ 'SPRINT_RETROSPECTIVE.ADD' | translate }}
+                        
+                        // Items list
+                        .retro-items-list
+                            .retro-item(
+                                ng-repeat="item in retrospectiveForm.to_improve track by $index"
+                                ng-class="{'has-votes': item.votes > 0}"
+                            )
+                                .item-content
+                                    .item-text {{ item.text }}
+                                    .item-actions
+                                        button.vote-btn(
+                                            type="button"
+                                            ng-click="ctrl.voteItem('to_improve', $index)"
+                                            ng-class="{'voted': ctrl.hasUserVoted('to_improve', $index)}"
+                                            ng-disabled="ctrl.hasUserVoted('to_improve', $index)"
+                                            title="{{ 'SPRINT_RETROSPECTIVE.VOTE_FOR_THIS' | translate }}"
+                                        )
+                                            tg-svg(svg-icon="icon-thumb-up")
+                                        .vote-count {{ item.votes || 0 }}
+                                        button.remove-btn(
+                                            type="button"
+                                            ng-if="isScrumMaster && !retrospective"
+                                            ng-click="ctrl.removeToImprove($index)"
+                                            title="{{ 'SPRINT_RETROSPECTIVE.REMOVE' | translate }}"
+                                        )
+                                            tg-svg(svg-icon="icon-close")
+                        
+                        .empty-message(ng-if="retrospectiveForm.to_improve.length === 0")
+                            p {{ 'SPRINT_RETROSPECTIVE.NO_ITEMS_YET' | translate }}
+                    
+                    // Action items tab
+                    .action-items-content(ng-show="isActiveTab('actionItems')")
+                        h3 
+                            tg-svg(svg-icon="icon-task")
+                            span {{ 'SPRINT_RETROSPECTIVE.ACTION_ITEMS_TITLE' | translate }}
+                        
+                        // Add new action (only SM - always show if SM)
+                        .add-action-section(ng-if="isScrumMaster")
+                            h4 {{ 'SPRINT_RETROSPECTIVE.ADD_NEW_ACTION' | translate }}
+                            .action-form
+                                .form-field
+                                    label {{ 'SPRINT_RETROSPECTIVE.ACTION_DESCRIPTION' | translate }}
+                                    textarea(
+                                        rows="2"
+                                        ng-model="forms.newAction.action"
+                                        placeholder="{{ 'SPRINT_RETROSPECTIVE.ACTION_PLACEHOLDER' | translate }}"
+                                    )
+                                
+                                .form-row
+                                    .form-field
+                                        label {{ 'SPRINT_RETROSPECTIVE.RESPONSIBLE' | translate }}
+                                        select(
+                                            ng-model="forms.newAction.responsible_id"
+                                            ng-options="member.id as ((member.full_name || member.username) || 'Unknown') for member in teamMembers"
+                                        )
+                                            option(value="") {{ 'SPRINT_RETROSPECTIVE.SELECT_RESPONSIBLE' | translate }}
+                                    
+                                    .form-field
+                                        label {{ 'SPRINT_RETROSPECTIVE.DUE_DATE' | translate }}
+                                        input(
+                                            type="date"
+                                            ng-model="forms.newAction.due_date"
+                                        )
+                                
+                                button.btn.btn-primary(
+                                    type="button"
+                                    ng-click="ctrl.addAction()"
+                                    ng-disabled="!forms.newAction.action"
+                                ) {{ 'SPRINT_RETROSPECTIVE.ADD_ACTION' | translate }}
+                        
+                        // Actions list
+                        .actions-list
+                            .action-card(
+                                ng-repeat="action in retrospectiveForm.action_items track by $index"
+                            )
+                                .action-header
+                                    .action-info
+                                        h4 {{ action.action }}
+                                        .action-meta
+                                            span.responsible(ng-if="action.responsible_id")
+                                                tg-svg(svg-icon="icon-user")
+                                                span {{ (teamMembers | filter:{id: action.responsible_id})[0].username || 'SPRINT_RETROSPECTIVE.UNASSIGNED' | translate }}
+                                            span.due-date(ng-if="action.due_date")
+                                                tg-svg(svg-icon="icon-calendar")
+                                                span {{ action.due_date | date:'mediumDate' }}
+                                    
+                                    button.remove-btn(
+                                        type="button"
+                                        ng-if="isScrumMaster && !retrospective"
+                                        ng-click="ctrl.removeAction($index)"
+                                        title="{{ 'SPRINT_RETROSPECTIVE.REMOVE' | translate }}"
+                                    )
+                                        tg-svg(svg-icon="icon-close")
+                        
+                        .empty-message(ng-if="retrospectiveForm.action_items.length === 0")
+                            p {{ 'SPRINT_RETROSPECTIVE.NO_ACTIONS_YET' | translate }}
+                    
+                    // Previous actions tab
+                    .previous-actions-content(ng-show="isActiveTab('previousActions')")
+                        h3 
+                            tg-svg(svg-icon="icon-history")
+                            span {{ 'SPRINT_RETROSPECTIVE.PREVIOUS_ACTIONS_TITLE' | translate }}
+                        
+                        .actions-list
+                            .action-card(
+                                ng-repeat="action in previousActions"
+                                ng-class="{'completed': ctrl.isActionCompleted(action)}"
+                            )
+                                .action-header
+                                    .action-info
+                                        h4 
+                                            label.checkbox(ng-if="isScrumMaster")
+                                                input(
+                                                    type="checkbox"
+                                                    ng-checked="ctrl.isActionCompleted(action)"
+                                                    ng-click="ctrl.markActionCompleted(action)"
+                                                )
+                                                span.checkmark
+                                            span {{ action.action }}
+                                        .action-meta
+                                            span.sprint-name
+                                                tg-svg(svg-icon="icon-sprint")
+                                                span {{ action.sprint }}
+                                            span.responsible(ng-if="action.responsible_name")
+                                                tg-svg(svg-icon="icon-user")
+                                                span {{ action.responsible_name }}
+                                            span.due-date(ng-if="action.due_date")
+                                                tg-svg(svg-icon="icon-calendar")
+                                                span {{ action.due_date }}
+                                    
+                                    .action-status
+                                        span.completed-badge(ng-if="action.completed || ctrl.isActionCompleted(action)")
+                                            tg-svg(svg-icon="icon-check")
+                                            span {{ 'SPRINT_RETROSPECTIVE.COMPLETED' | translate }}
+                        
+                        .empty-message(ng-if="!previousActions || previousActions.length === 0")
+                            p {{ 'SPRINT_RETROSPECTIVE.NO_PREVIOUS_ACTIONS' | translate }}
+                
+                // Submit button (only for SM)
+                .form-actions(ng-if="isScrumMaster && selectedSprintId")
+                    button.btn.btn-primary(
+                        type="button"
+                        ng-click="ctrl.submitRetrospective()"
+                        ng-disabled="submitting || (!retrospectiveForm.went_well.length && !retrospectiveForm.to_improve.length && !retrospectiveForm.action_items.length)"
+                    )
+                        span(ng-if="!submitting") {{ 'SPRINT_RETROSPECTIVE.SAVE_RETROSPECTIVE' | translate }}
+                        span(ng-if="submitting") {{ 'SPRINT_RETROSPECTIVE.SAVING' | translate }}
+                
+                // View mode message
+                .view-mode-message(ng-if="retrospective && !isScrumMaster")
+                    .info-box
+                        tg-svg(svg-icon="icon-info")
+                        p {{ 'SPRINT_RETROSPECTIVE.VIEW_MODE_MESSAGE' | translate }}

@@ -1,0 +1,17 @@
+
+/*
+This source code is licensed under the terms of the
+GNU Affero General Public License found in the LICENSE file in
+the root directory of this source tree.
+
+Copyright (c) 2021-present Kaleidos INC
+*/
+
+:root,
+:host {
+  --none: 0;
+  --common: 1;
+  --slider: 5;
+  --modal: 10;
+  --overlay: 90;
+}

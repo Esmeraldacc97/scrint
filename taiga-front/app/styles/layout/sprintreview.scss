@@ -1,0 +1,1039 @@
+// app/styles/layout/sprintreview.scss
+
+.sprint-review {
+    padding: 2rem;
+}
+
+.sprint-review-wrapper {
+    margin: 0 auto;
+    max-width: 1200px;
+}
+
+// Sprint selector
+.sprint-selector-wrapper {
+    align-items: center;
+    background: $mass-white;
+    border-radius: 4px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    padding: 1rem;
+
+    .sprint-selector {
+        align-items: center;
+        display: flex;
+        gap: 1rem;
+
+        label {
+            color: $grayer;
+            font-weight: 600;
+        }
+
+        .sprint-dropdown {
+            background: $white;
+            border: 1px solid $gray-light;
+            border-radius: 4px;
+            color: $grayer;
+            cursor: pointer;
+            font-size: 1rem;
+            min-width: 250px;
+            padding: .75rem 1rem;
+
+            &:focus {
+                border-color: $primary;
+                outline: none;
+            }
+
+            &:disabled {
+                cursor: not-allowed;
+                opacity: .5;
+            }
+        }
+    }
+
+    .actions-wrapper {
+        .btn-primary {
+            align-items: center;
+            background: $primary;
+            border: 1px solid $primary;
+            border-radius: 4px;
+            color: $white;
+            cursor: pointer;
+            display: flex;
+            font-size: .9rem;
+            font-weight: 500;
+            gap: .5rem;
+            padding: .5rem 1rem;
+            transition: all .2s;
+
+            svg {
+                height: 16px;
+                width: 16px;
+            }
+
+            &:hover {
+                background: darken($primary, 10%);
+                border-color: darken($primary, 10%);
+            }
+        }
+    }
+}
+// Loading and error states
+.loading-spinner {
+    padding: 3rem;
+    text-align: center;
+
+    img {
+        height: 50px;
+        margin-bottom: 1rem;
+        width: 50px;
+    }
+
+    span {
+        color: $gray;
+        display: block;
+    }
+}
+
+.error-message {
+    background: $red-10;
+    border-radius: 4px;
+    color: $red;
+    padding: 2rem;
+    text-align: center;
+
+    svg {
+        height: 24px;
+        margin-bottom: .5rem;
+        width: 24px;
+    }
+}
+
+.empty-state {
+    padding: 4rem 2rem;
+    text-align: center;
+
+    .empty-icon svg {
+        color: $gray-light;
+        height: 80px;
+        margin-bottom: 1rem;
+        width: 80px;
+    }
+
+    h3 {
+        color: $grayer;
+        margin-bottom: .5rem;
+    }
+
+    p {
+        color: $gray;
+    }
+}
+
+// Sprint content
+.sprint-content {
+    background: $white;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, .1);
+}
+
+.sprint-header {
+    align-items: center;
+    border-bottom: 1px solid $gray-light;
+    display: flex;
+    justify-content: space-between;
+    padding: 2rem;
+
+    .sprint-info {
+        h2 {
+            color: $grayer;
+            margin-bottom: .5rem;
+        }
+
+        .sprint-dates {
+            color: $gray;
+            font-size: .9rem;
+
+            .separator {
+                margin: 0 .5rem;
+            }
+        }
+    }
+
+    .approval-badge {
+        align-items: center;
+        background: $whitish;
+        border-radius: 20px;
+        display: flex;
+        gap: .5rem;
+        padding: .5rem 1rem;
+
+        &.approved {
+            background: $color-link-green;
+            color: $white;
+
+            svg {
+                color: $white;
+            }
+        }
+
+        svg {
+            height: 20px;
+            width: 20px;
+        }
+    }
+}
+
+// Tabs
+.review-tabs {
+    border-bottom: 2px solid $gray-light;
+    display: flex;
+
+    .tab {
+        color: $gray;
+        cursor: pointer;
+        font-weight: 500;
+        padding: 1rem 2rem;
+        position: relative;
+        transition: all .2s;
+
+        &:hover {
+            background: $whitish;
+            color: $grayer;
+        }
+
+        &.active {
+            color: $primary;
+
+            &::after {
+                background: $primary;
+                bottom: -2px;
+                content: '';
+                height: 2px;
+                left: 0;
+                position: absolute;
+                width: 100%;
+            }
+        }
+    }
+}
+
+.tab-content {
+    padding: 2rem;
+}
+
+// Overview tab
+.metrics-grid {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+.metric-card {
+    background: $mass-white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    text-align: center;
+
+    .metric-value {
+        color: $primary;
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin-bottom: .5rem;
+    }
+
+    .metric-label {
+        color: $gray;
+        font-size: .9rem;
+        margin-bottom: 1rem;
+    }
+
+    .metric-detail {
+        color: $gray;
+        font-size: .85rem;
+    }
+
+    .progress-bar {
+        background: $gray-light;
+        border-radius: 10px;
+        height: 8px;
+        margin-top: 1rem;
+        overflow: hidden;
+
+        .progress-fill {
+            background: $primary;
+            height: 100%;
+            transition: width .3s ease;
+        }
+    }
+
+    .satisfaction-bar {
+        margin-top: 1rem;
+
+        .emoji {
+            font-size: 1.5rem;
+            margin: 0 2px;
+            opacity: .3;
+
+            &.active {
+                opacity: 1;
+            }
+        }
+    }
+
+    .stars {
+        margin-top: 1rem;
+
+        svg {
+            height: 24px;
+            margin: 0 2px;
+            width: 24px;
+        }
+    }
+}
+
+// Stories tab
+.story-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.story-card {
+    background: $mass-white;
+    border: 2px solid $gray-light;
+    border-radius: 8px;
+    padding: 1.5rem;
+    transition: all .2s;
+
+    &.approved {
+        border-color: $color-link-green;
+    }
+
+    .story-header {
+        align-items: flex-start;
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+
+        .story-info {
+            flex: 1;
+
+            h4 {
+                color: $grayer;
+                margin-bottom: .5rem;
+            }
+
+            .story-points {
+                align-items: center;
+                color: $gray;
+                display: flex;
+                font-size: .9rem;
+                gap: .25rem;
+
+                svg {
+                    height: 16px;
+                    width: 16px;
+                }
+            }
+        }
+
+        .approval-checkbox {
+            align-items: center;
+            cursor: pointer;
+            display: flex;
+            gap: .5rem;
+
+            input[type='checkbox'] {
+                cursor: pointer;
+                height: 18px;
+                width: 18px;
+            }
+
+            span {
+                color: $gray;
+                font-size: .9rem;
+            }
+        }
+    }
+
+    .story-description {
+        color: $gray;
+        font-size: .9rem;
+        margin-bottom: 1rem;
+
+        p {
+            line-height: 1.5;
+            margin: 0;
+        }
+    }
+
+    .story-feedback {
+        .rating-section {
+            margin-bottom: 1rem;
+
+            label {
+                color: $grayer;
+                display: block;
+                font-size: .9rem;
+                font-weight: 600;
+                margin-bottom: .5rem;
+            }
+        }
+
+        .star-rating {
+            display: flex;
+            gap: .25rem;
+
+            svg {
+                cursor: pointer;
+                height: 24px;
+                transition: all .2s;
+                width: 24px;
+
+                &.clickable:hover {
+                    transform: scale(1.2);
+                }
+            }
+        }
+
+        .comment-section {
+            textarea {
+                border: 1px solid $gray-light;
+                border-radius: 4px;
+                font-family: inherit;
+                font-size: .9rem;
+                padding: .75rem;
+                resize: vertical;
+                width: 100%;
+
+                &:focus {
+                    border-color: $primary;
+                    outline: none;
+                }
+            }
+        }
+    }
+
+    .story-existing-feedback {
+        .feedback-item {
+            align-items: center;
+            color: $gray;
+            display: flex;
+            font-size: .9rem;
+            gap: .5rem;
+            margin-bottom: .5rem;
+
+            svg {
+                color: $color-link-green;
+                height: 18px;
+                width: 18px;
+            }
+
+            .stars-small {
+                display: flex;
+                gap: 2px;
+                margin-left: .5rem;
+
+                svg {
+                    height: 16px;
+                    width: 16px;
+                }
+            }
+
+            .comment-text {
+                background: $whitish;
+                border-radius: 4px;
+                color: $grayer;
+                margin-top: .5rem;
+                padding: .5rem;
+            }
+        }
+    }
+}
+
+// Star styles
+.star-filled {
+    color: $color-link-yellow;
+    fill: $color-link-yellow;
+}
+
+.star-empty {
+    color: $gray-light;
+    fill: $gray-light;
+}
+
+// Feedback tab
+.feedback-sent {
+    text-align: center;
+
+    .success-message {
+        margin-bottom: 2rem;
+
+        svg {
+            color: $color-link-green;
+            height: 60px;
+            margin-bottom: 1rem;
+            width: 60px;
+        }
+
+        h3 {
+            color: $grayer;
+            margin-bottom: .5rem;
+        }
+
+        p {
+            color: $gray;
+        }
+    }
+
+    .btn-secondary {
+        background: $whitish;
+        border: 1px solid $gray-light;
+        border-radius: 4px;
+        color: $gray;
+        cursor: pointer;
+        font-size: .9rem;
+        font-weight: 500;
+        padding: .5rem 1.5rem;
+        transition: all .2s;
+
+        &:hover {
+            background: $white;
+            border-color: $gray;
+            color: $grayer;
+        }
+    }
+}
+
+.feedback-summary {
+    background: $mass-white;
+    border-radius: 8px;
+    margin: 0 auto 2rem;
+    max-width: 600px;
+    padding: 1.5rem;
+    text-align: left;
+
+    h4 {
+        color: $grayer;
+        margin-bottom: 1rem;
+    }
+
+    .summary-item {
+        align-items: center;
+        border-bottom: 1px solid $gray-light;
+        display: flex;
+        gap: 1rem;
+        padding: .75rem 0;
+
+        &:last-child {
+            border-bottom: none;
+        }
+
+        .label {
+            color: $gray;
+            font-weight: 600;
+            min-width: 150px;
+        }
+
+        .value {
+            color: $grayer;
+            flex: 1;
+
+            .emoji {
+                font-size: 1.2rem;
+                margin-right: .5rem;
+            }
+
+            p {
+                margin: 0;
+            }
+        }
+    }
+}
+
+// Feedback form
+.feedback-form {
+    max-width: 800px;
+
+    h3 {
+        color: $grayer;
+        margin-bottom: 2rem;
+    }
+
+    h4 {
+        color: $grayer;
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+    }
+
+    .form-section {
+        margin-bottom: 2rem;
+    }
+
+    .satisfaction-selector {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+
+        .satisfaction-option {
+            background: $white;
+            border: 3px solid $gray-light;
+            border-radius: 12px;
+            cursor: pointer;
+            padding: 1rem 1.5rem;
+            transition: all .2s;
+            user-select: none;
+
+            &:hover {
+                background: $primary-10;
+                border-color: $primary-light;
+                transform: translateY(-2px);
+            }
+
+            &.selected {
+                background: $primary-25;
+                border-color: $primary;
+                box-shadow: 0 0 0 4px rgba($primary, .2);
+                transform: scale(1.05);
+            }
+
+            .emoji {
+                display: block;
+                font-size: 2rem;
+                margin-bottom: .5rem;
+                text-align: center;
+            }
+
+            .text {
+                font-size: .85rem;
+                font-weight: 500;
+                text-align: center;
+            }
+        }
+    }
+
+    .form-row {
+        display: grid;
+        gap: 2rem;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        margin-bottom: 2rem;
+    }
+
+    .form-field {
+        margin-bottom: 1.5rem;
+
+        label {
+            color: $grayer;
+            display: block;
+            font-weight: 600;
+            margin-bottom: .5rem;
+        }
+
+        textarea {
+            border: 1px solid $gray-light;
+            border-radius: 4px;
+            font-family: inherit;
+            padding: .75rem;
+            resize: vertical;
+            width: 100%;
+
+            &:focus {
+                border-color: $primary;
+                outline: none;
+            }
+        }
+    }
+
+    .rating-selector {
+        display: flex;
+        gap: .5rem;
+
+        .rating-btn {
+            background: $white;
+            border: 2px solid $gray-light;
+            border-radius: 4px;
+            color: $gray;
+            cursor: pointer;
+            font-weight: 600;
+            height: 40px;
+            transition: all .2s;
+            width: 40px;
+
+            &:hover {
+                background: $primary-10;
+                border-color: $primary-light;
+                color: $primary;
+            }
+
+            &.selected {
+                background: $primary;
+                border-color: $primary;
+                color: $white;
+            }
+        }
+    }
+
+    .approval-section {
+        background: $mass-white;
+        border-radius: 8px;
+        margin: 2rem 0;
+        padding: 1.5rem;
+
+        .approval-actions {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .btn {
+            align-items: center;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            font-size: 1rem;
+            font-weight: 500;
+            gap: .5rem;
+            padding: .75rem 1.5rem;
+            transition: all .2s;
+
+            svg {
+                height: 20px;
+                width: 20px;
+            }
+
+            &.btn-success {
+                background: $color-link-green;
+                color: $white;
+
+                &:hover {
+                    background: darken($color-link-green, 10%);
+                }
+            }
+
+            &.btn-danger {
+                background: $color-link-red;
+                color: $white;
+
+                &:hover {
+                    background: darken($color-link-red, 10%);
+                }
+            }
+        }
+    }
+
+    .form-actions {
+        margin-top: 2rem;
+
+        .btn-primary {
+            background: $primary;
+            border: none;
+            border-radius: 4px;
+            color: $white;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            min-width: 200px;
+            padding: .75rem 1.5rem;
+            transition: all .2s;
+
+            &:hover:not(:disabled) {
+                background: darken($primary, 10%);
+            }
+
+            &:disabled {
+                cursor: not-allowed;
+                opacity: .5;
+            }
+        }
+    }
+}
+
+// Team feedback tab
+.team-content {
+    h3 {
+        color: $grayer;
+        margin-bottom: 1.5rem;
+    }
+}
+
+.feedback-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.feedback-card {
+    background: $mass-white;
+    border-radius: 8px;
+    padding: 1.5rem;
+
+    .feedback-header {
+        align-items: center;
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+
+        .user-info {
+            align-items: center;
+            display: flex;
+            gap: 1rem;
+
+            .avatar {
+                border-radius: 50%;
+                height: 48px;
+                object-fit: cover;
+                width: 48px;
+            }
+
+            .user-details {
+                .user-name {
+                    color: $grayer;
+                    font-weight: 600;
+                    margin-bottom: .25rem;
+                }
+
+                .user-role {
+                    color: $gray;
+                    font-size: .85rem;
+                }
+            }
+        }
+
+        .satisfaction-badge {
+            border-radius: 20px;
+            padding: .5rem 1rem;
+
+            &.status-bad {
+                background: $red-10;
+                color: $red;
+            }
+
+            &.status-neutral {
+                background: $color-solid-yellow;
+                color: $color-link-yellow;
+            }
+
+            &.status-good {
+                background: $color-solid-green;
+                color: $color-link-green;
+            }
+
+            .emoji {
+                font-size: 1.2rem;
+                margin-right: .5rem;
+            }
+        }
+    }
+
+    .feedback-content {
+        .metrics-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin-bottom: 1rem;
+
+            .metric {
+                align-items: center;
+                display: flex;
+                gap: .5rem;
+
+                .label {
+                    color: $gray;
+                    font-size: .9rem;
+                }
+
+                .value {
+                    color: $grayer;
+                    font-weight: 600;
+                }
+            }
+        }
+
+        .stars-small {
+            display: flex;
+            gap: 2px;
+
+            svg {
+                height: 16px;
+                width: 16px;
+            }
+        }
+
+        .feedback-text {
+            color: $grayer;
+            margin: 1rem 0;
+
+            p {
+                line-height: 1.5;
+                margin: 0;
+            }
+        }
+
+        .approval-status {
+            margin-top: 1rem;
+
+            .approved,
+            .rejected {
+                align-items: center;
+                display: flex;
+                gap: .5rem;
+
+                svg {
+                    height: 20px;
+                    width: 20px;
+                }
+            }
+
+            .approved {
+                color: $color-link-green;
+            }
+
+            .rejected {
+                color: $color-link-red;
+
+                .changes-text {
+                    background: $red-10;
+                    border-radius: 4px;
+                    color: $red;
+                    margin-top: .5rem;
+                    padding: .75rem;
+                }
+            }
+        }
+    }
+}
+
+.empty-feedback {
+    color: $gray;
+    padding: 2rem;
+    text-align: center;
+}
+
+// Sidebar menu
+.sprint-review-menu {
+    padding: 1.5rem;
+
+    h3 {
+        color: $grayer;
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+    }
+
+    .menu-section {
+        margin-bottom: 2rem;
+
+        h4 {
+            color: $gray;
+            font-size: .9rem;
+            font-weight: 600;
+            margin-bottom: .75rem;
+        }
+    }
+
+    .stats-list {
+        .stat {
+            border-bottom: 1px solid $gray-light;
+            display: flex;
+            justify-content: space-between;
+            padding: .5rem 0;
+
+            &:last-child {
+                border-bottom: none;
+            }
+
+            .label {
+                color: $gray;
+                font-size: .9rem;
+            }
+
+            .value {
+                color: $grayer;
+                font-weight: 600;
+            }
+        }
+    }
+
+    .status-complete {
+        align-items: center;
+        color: $primary;
+        display: flex;
+        gap: .5rem;
+
+        svg {
+            height: 20px;
+            width: 20px;
+        }
+    }
+}
+
+// Responsive
+@media (max-width: 768px) {
+    .sprint-review {
+        padding: 1rem;
+    }
+
+    .sprint-selector-wrapper {
+        flex-direction: column;
+
+        .sprint-selector {
+            flex-direction: column;
+            width: 100%;
+
+            .sprint-dropdown {
+                width: 100%;
+            }
+        }
+    }
+
+    .sprint-header {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .review-tabs {
+        flex-wrap: wrap;
+
+        .tab {
+            flex: 1;
+            min-width: 120px;
+            padding: .75rem 1rem;
+            text-align: center;
+        }
+    }
+
+    .metrics-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .satisfaction-selector {
+        .satisfaction-option {
+            flex: 1;
+            min-width: 100px;
+
+            .emoji {
+                font-size: 1.5rem;
+            }
+
+            .text {
+                font-size: .75rem;
+            }
+        }
+    }
+
+    .feedback-card {
+        .feedback-header {
+            flex-direction: column;
+            gap: 1rem;
+            text-align: center;
+        }
+    }
+}

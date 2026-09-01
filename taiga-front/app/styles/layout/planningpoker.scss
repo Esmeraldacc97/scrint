@@ -1,0 +1,10 @@
+.planningpoker {
+    h2 {
+        margin: 1rem 0;
+        span {
+            &:last-child {
+                color: $color-link-primary;
+            }
+        }
+    }
+}

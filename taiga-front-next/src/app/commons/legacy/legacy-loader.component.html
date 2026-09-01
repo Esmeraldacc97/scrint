@@ -1,0 +1,19 @@
+<!--
+This source code is licensed under the terms of the
+GNU Affero General Public License found in the LICENSE file in
+the root directory of this source tree.
+
+Copyright (c) 2021-present Kaleidos INC
+-->
+
+<ng-container [ngSwitch]="component">
+  <ng-container *ngSwitchCase="'tg-project-navigation'">
+    <tg-project-navigation
+      *ngIf="params?.project"
+      [project]="params.project | camelCaseTransformer"
+      (search)="events.search()">
+    </tg-project-navigation>
+  </ng-container>
+  <p *ngSwitchDefault>Invalid component</p>
+</ng-container>
+<tg-svg-sprite></tg-svg-sprite>

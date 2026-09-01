@@ -1,0 +1,726 @@
+// app/styles/layout/sprintretrospective.scss
+
+.sprint-retrospective {
+    padding: 2rem;
+}
+
+.sprint-retrospective-wrapper {
+    margin: 0 auto;
+    max-width: 1200px;
+}
+
+// Sprint selector
+.sprint-selector-wrapper {
+    align-items: center;
+    background: $mass-white;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, .05);
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+}
+
+.sprint-selector {
+    align-items: center;
+    display: flex;
+    gap: 1rem;
+
+    label {
+        color: $grayer;
+        font-weight: 600;
+    }
+
+    .sprint-dropdown {
+        border: 1px solid $whitish;
+        border-radius: 4px;
+        font-size: 1rem;
+        min-width: 250px;
+        padding: .75rem 1rem;
+
+        &:focus {
+            border-color: $primary;
+            outline: none;
+        }
+    }
+}
+
+.actions-wrapper {
+    .btn {
+        align-items: center;
+        display: flex;
+        gap: .5rem;
+
+        tg-svg {
+            height: 16px;
+            width: 16px;
+        }
+    }
+}
+
+// Loading state
+.loading-spinner {
+    padding: 4rem;
+    text-align: center;
+
+    img {
+        height: 48px;
+        margin-bottom: 1rem;
+        width: 48px;
+    }
+
+    span {
+        color: $gray;
+        display: block;
+        font-size: 1.1rem;
+    }
+}
+
+// Error state
+.error-message {
+    background: $white;
+    border: 1px solid $red-light;
+    border-radius: 8px;
+    padding: 3rem;
+    text-align: center;
+
+    tg-svg {
+        fill: $red;
+        height: 48px;
+        margin-bottom: 1rem;
+        width: 48px;
+    }
+
+    p {
+        color: $red;
+        font-size: 1.1rem;
+        margin: 0;
+    }
+}
+
+// Empty state
+.empty-state {
+    background: $white;
+    border-radius: 8px;
+    padding: 4rem;
+    text-align: center;
+
+    .empty-icon tg-svg {
+        fill: $gray-light;
+        height: 64px;
+        margin-bottom: 1.5rem;
+        width: 64px;
+    }
+
+    h3 {
+        color: $grayer;
+        font-size: 1.5rem;
+        margin-bottom: .5rem;
+    }
+
+    p {
+        color: $gray;
+        font-size: 1.1rem;
+    }
+}
+
+// Sprint content
+.sprint-content {
+    background: $white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, .05);
+    overflow: hidden;
+}
+
+.sprint-header {
+    align-items: center;
+    border-bottom: 1px solid $whitish;
+    display: flex;
+    justify-content: space-between;
+    padding: 2rem;
+}
+
+.sprint-info {
+    h2 {
+        color: $grayer;
+        font-size: 1.75rem;
+        margin-bottom: .25rem;
+    }
+
+    .sprint-project {
+        color: $gray;
+        font-size: 1rem;
+    }
+}
+
+.sprint-metrics {
+    display: flex;
+    gap: 2rem;
+}
+
+.metric {
+    text-align: center;
+
+    .label {
+        color: $gray;
+        display: block;
+        font-size: .875rem;
+        margin-bottom: .25rem;
+    }
+
+    .value {
+        color: $primary;
+        font-size: 1.5rem;
+        font-weight: 700;
+    }
+}
+
+// Team mood section
+.team-mood-section {
+    border-bottom: 1px solid $whitish;
+    padding: 2rem;
+
+    h3 {
+        color: $grayer;
+        font-size: 1.25rem;
+        margin-bottom: 1rem;
+    }
+}
+
+.mood-selector {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.mood-option {
+    align-items: center;
+    border: 2px solid $whitish;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem 1.5rem;
+    transition: all .2s;
+
+    &:hover {
+        background: $primary-10;
+        border-color: $primary-light;
+    }
+
+    &.selected {
+        background: $primary-light;
+        border-color: $primary;
+    }
+
+    .emoji {
+        font-size: 2rem;
+        margin-bottom: .5rem;
+    }
+
+    .text {
+        color: $grayer;
+        font-size: .875rem;
+    }
+}
+
+// Tabs
+.retro-tabs {
+    border-bottom: 2px solid $whitish;
+    display: flex;
+}
+
+.tab {
+    align-items: center;
+    border-bottom: 2px solid transparent;
+    color: $gray;
+    cursor: pointer;
+    display: flex;
+    flex: 1;
+    gap: .5rem;
+    justify-content: center;
+    padding: 1rem 1.5rem;
+    text-align: center;
+    transition: all .2s;
+
+    tg-svg {
+        fill: $gray;
+        height: 20px;
+        width: 20px;
+    }
+
+    &:hover {
+        background: $whitish;
+        color: $grayer;
+
+        tg-svg {
+            fill: $grayer;
+        }
+    }
+
+    &.active {
+        border-bottom-color: $primary;
+        color: $primary;
+
+        tg-svg {
+            fill: $primary;
+        }
+    }
+}
+
+// Tab content
+.tab-content {
+    min-height: 400px;
+    padding: 2rem;
+
+    h3 {
+        align-items: center;
+        color: $grayer;
+        display: flex;
+        font-size: 1.5rem;
+        gap: .75rem;
+        margin-bottom: 1.5rem;
+
+        tg-svg {
+            fill: $grayer;
+            height: 24px;
+            width: 24px;
+        }
+    }
+}
+
+// Add item section
+.add-item-section {
+    margin-bottom: 2rem;
+}
+
+.input-group {
+    display: flex;
+    gap: .5rem;
+
+    input {
+        border: 1px solid $whitish;
+        border-radius: 4px;
+        flex: 1;
+        font-size: 1rem;
+        padding: .75rem 1rem;
+
+        &:focus {
+            border-color: $primary;
+            outline: none;
+        }
+    }
+
+    .btn-small {
+        font-size: .875rem;
+        padding: .75rem 1.5rem;
+    }
+}
+
+// Retro items list
+.retro-items-list {
+    display: flex;
+    flex-direction: column;
+    gap: .75rem;
+}
+
+.retro-item {
+    background: $whitish;
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    transition: all .2s;
+
+    &.has-votes {
+        background: $primary-10;
+        border: 1px solid $primary-light;
+    }
+}
+
+.item-content {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+}
+
+.item-text {
+    color: $grayer;
+    flex: 1;
+    font-size: 1rem;
+}
+
+.item-actions {
+    align-items: center;
+    display: flex;
+    gap: .5rem;
+}
+
+.vote-btn {
+    align-items: center;
+    background: $white;
+    border: 1px solid $whitish;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    height: 32px;
+    justify-content: center;
+    transition: all .2s;
+    width: 32px;
+
+    tg-svg {
+        fill: $gray;
+        height: 16px;
+        width: 16px;
+    }
+
+    &:hover {
+        background: $primary-light;
+        border-color: $primary;
+
+        tg-svg {
+            fill: $primary;
+        }
+    }
+
+    &.voted {
+        background: $primary;
+        border-color: $primary;
+        cursor: not-allowed;
+
+        tg-svg {
+            fill: $white;
+        }
+    }
+}
+
+.vote-count {
+    color: $primary;
+    font-weight: 600;
+    min-width: 24px;
+    text-align: center;
+}
+
+.remove-btn {
+    align-items: center;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    height: 28px;
+    justify-content: center;
+    width: 28px;
+
+    tg-svg {
+        fill: $gray;
+        height: 16px;
+        width: 16px;
+    }
+
+    &:hover tg-svg {
+        fill: $red;
+    }
+}
+
+// Action form
+.add-action-section {
+    background: $whitish;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+
+    h4 {
+        color: $grayer;
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+    }
+}
+
+.action-form {
+    .form-field {
+        margin-bottom: 1rem;
+
+        label {
+            color: $grayer;
+            display: block;
+            font-size: .875rem;
+            font-weight: 600;
+            margin-bottom: .5rem;
+        }
+
+        textarea,
+        input,
+        select {
+            background: $white;
+            border: 1px solid $whitish;
+            border-radius: 4px;
+            font-size: 1rem;
+            padding: .75rem 1rem;
+            width: 100%;
+
+            &:focus {
+                border-color: $primary;
+                outline: none;
+            }
+        }
+
+        textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+    }
+
+    .form-row {
+        display: grid;
+        gap: 1rem;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .btn {
+        margin-top: 1rem;
+    }
+}
+
+// Actions list
+.actions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.action-card {
+    background: $whitish;
+    border-radius: 8px;
+    padding: 1.5rem;
+    transition: all .2s;
+
+    &.completed {
+        background: $color-solid-green;
+        opacity: .6;
+    }
+}
+
+.action-header {
+    align-items: flex-start;
+    display: flex;
+    justify-content: space-between;
+}
+
+.action-info {
+    flex: 1;
+
+    h4 {
+        color: $grayer;
+        font-size: 1.1rem;
+        margin-bottom: .5rem;
+    }
+}
+
+.checkbox {
+    align-items: center;
+    display: inline-flex;
+    margin-right: .5rem;
+    position: relative;
+
+    input {
+        opacity: 0;
+        position: absolute;
+    }
+
+    .checkmark {
+        align-items: center;
+        border: 2px solid $primary;
+        border-radius: 4px;
+        display: flex;
+        height: 20px;
+        justify-content: center;
+        margin-right: .5rem;
+        width: 20px;
+
+        &::after {
+            color: $white;
+            content: '✓';
+            font-weight: bold;
+            opacity: 0;
+        }
+    }
+
+    input:checked + .checkmark {
+        background: $primary;
+
+        &::after {
+            opacity: 1;
+        }
+    }
+}
+
+.action-meta {
+    color: $gray;
+    display: flex;
+    font-size: .875rem;
+    gap: 1.5rem;
+
+    span {
+        align-items: center;
+        display: flex;
+        gap: .25rem;
+
+        tg-svg {
+            fill: $gray;
+            height: 14px;
+            width: 14px;
+        }
+    }
+}
+
+.action-status {
+    .completed-badge {
+        align-items: center;
+        background: $color-link-green;
+        border-radius: 4px;
+        color: $white;
+        display: flex;
+        font-size: .75rem;
+        font-weight: 600;
+        gap: .25rem;
+        padding: .25rem .75rem;
+
+        tg-svg {
+            fill: $white;
+            height: 12px;
+            width: 12px;
+        }
+    }
+}
+
+.action-header .remove-btn {
+    align-items: center;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    height: 32px;
+    justify-content: center;
+    width: 32px;
+
+    tg-svg {
+        fill: $gray;
+        height: 16px;
+        width: 16px;
+    }
+
+    &:hover tg-svg {
+        fill: $red;
+    }
+}
+
+// Empty message
+.empty-message {
+    color: $gray;
+    font-style: italic;
+    padding: 3rem;
+    text-align: center;
+}
+
+// Form actions
+.form-actions {
+    border-top: 1px solid $whitish;
+    padding: 2rem;
+    text-align: center;
+
+    .btn {
+        min-width: 200px;
+    }
+}
+
+// View mode message
+.view-mode-message {
+    border-top: 1px solid $whitish;
+    padding: 2rem;
+}
+
+.info-box {
+    align-items: center;
+    background: rgba($primary, .1);
+    border-radius: 8px;
+    display: flex;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+
+    tg-svg {
+        fill: $primary;
+        height: 24px;
+        width: 24px;
+    }
+
+    p {
+        color: $grayer;
+        margin: 0;
+    }
+}
+
+// Sidebar menu
+.sprint-retrospective-menu {
+    padding: 1.5rem;
+
+    h3 {
+        color: $grayer;
+        font-size: 1.25rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .menu-section {
+        margin-bottom: 2rem;
+
+        h4 {
+            color: $grayer;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: .75rem;
+        }
+    }
+}
+
+.stats-list {
+    .stat {
+        border-bottom: 1px solid $whitish;
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: .5rem;
+        padding: .5rem 0;
+
+        &:last-child {
+            border-bottom: none;
+        }
+
+        .label {
+            color: $gray;
+            font-size: .875rem;
+        }
+
+        .value {
+            color: $grayer;
+            font-weight: 600;
+
+            .mood-emoji {
+                font-size: 1.25rem;
+                margin-right: .25rem;
+            }
+        }
+    }
+}
+
+.status-info {
+    align-items: center;
+    background: $whitish;
+    border-radius: 6px;
+    color: $grayer;
+    display: flex;
+    font-size: .875rem;
+    gap: .5rem;
+    padding: .75rem 1rem;
+
+    tg-svg {
+        fill: $primary;
+        height: 18px;
+        width: 18px;
+    }
+}

@@ -1,0 +1,28 @@
+/**
+ * This source code is licensed under the terms of the
+ * GNU Affero General Public License found in the LICENSE file in
+ * the root directory of this source tree.
+ *
+ * Copyright (c) 2021-present Kaleidos INC
+ */
+
+import { NgModule } from '@angular/core';
+import { HttpClientModule } from '@angular/common/http';
+import { ApiRestInterceptorModule } from '@/app/commons/api-rest-interceptor/api-rest-interceptor.module';
+import { UserstoriesApiService } from './userstories-api.service';
+import { UserstoriesCustomAttributeApiService } from './userstories-custom-attribute-api.service';
+import { UserstoriesCustomAttributeValuesApiService } from './userstories-custom-attribute-values-api.service';
+
+@NgModule({
+  declarations: [],
+  imports: [
+    HttpClientModule,
+    ApiRestInterceptorModule,
+  ],
+  providers: [
+    UserstoriesApiService,
+    UserstoriesCustomAttributeApiService,
+    UserstoriesCustomAttributeValuesApiService,
+  ],
+})
+export class UserstoriesApiModule { }

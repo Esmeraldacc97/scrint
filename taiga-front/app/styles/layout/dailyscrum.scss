@@ -1,0 +1,814 @@
+// app/styles/layout/dailyscrum.scss
+
+.daily-scrum {
+    padding: 2rem;
+}
+
+.daily-meeting-wrapper {
+    margin: 0 auto;
+    max-width: 1200px;
+}
+
+// Date selector
+.date-selector-wrapper {
+    align-items: center;
+    background: $mass-white;
+    border-radius: 4px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    padding: 1rem;
+}
+
+.date-controls {
+    align-items: center;
+    display: flex;
+    gap: 1rem;
+
+    .btn-icon {
+        background: $white;
+        border: 2px solid $gray-light;
+        border-radius: 6px;
+        color: $gray;
+        cursor: pointer;
+        padding: .75rem;
+        transition: all .2s;
+
+        svg {
+            display: block;
+            height: 20px;
+            width: 20px;
+        }
+
+        &:hover:not(:disabled) {
+            background: $primary-light;
+            border-color: $primary;
+            color: $primary;
+            transform: scale(1.05);
+        }
+
+        &:disabled {
+            background: $whitish;
+            cursor: not-allowed;
+            opacity: .4;
+        }
+    }
+}
+
+.date-display {
+    align-items: center;
+    display: flex;
+    gap: .5rem;
+    position: relative;
+
+    .date-input {
+        cursor: pointer;
+        height: 100%;
+        opacity: 0;
+        position: absolute;
+        width: 100%;
+        z-index: 1;
+    }
+
+    .date-text {
+        background: $white;
+        border: 1px solid $gray-light;
+        border-radius: 4px;
+        cursor: pointer;
+        display: block;
+        font-size: 1.1rem;
+        font-weight: 500;
+        min-width: 250px;
+        padding: .75rem 1.5rem;
+        text-align: center;
+
+        &:hover {
+            background: $whitish;
+            border-color: $primary-light;
+        }
+    }
+
+    .today-badge {
+        background: $primary;
+        border-radius: 12px;
+        color: $white;
+        display: inline-block;
+        font-size: .75rem;
+        font-weight: 600;
+        margin-left: .5rem;
+        padding: 2px 8px;
+        vertical-align: middle;
+    }
+}
+
+.actions-wrapper {
+    align-items: center;
+    display: flex;
+    gap: 1rem;
+
+    .btn-secondary,
+    .btn-primary {
+        align-items: center;
+        border: 1px solid $gray-light;
+        border-radius: 4px;
+        cursor: pointer;
+        display: flex;
+        font-size: .9rem;
+        font-weight: 500;
+        gap: .5rem;
+        padding: .5rem 1rem;
+        transition: all .2s;
+
+        svg {
+            height: 16px;
+            width: 16px;
+        }
+
+        &:disabled {
+            cursor: not-allowed;
+            opacity: .5;
+        }
+    }
+
+    .btn-secondary {
+        background: $whitish;
+        color: $gray;
+
+        &:hover:not(:disabled) {
+            background: $white;
+            border-color: $gray;
+            color: $grayer;
+        }
+    }
+    .btn-primary {
+        background: $primary;
+        border-color: $primary;
+        color: $white;
+
+        &:hover:not(:disabled) {
+            background: darken($primary, 10%);
+            border-color: darken($primary, 10%);
+        }
+    }
+}
+
+// Loading and error states
+.loading-spinner {
+    padding: 3rem;
+    text-align: center;
+
+    img {
+        height: 50px;
+        margin-bottom: 1rem;
+        width: 50px;
+    }
+
+    span {
+        color: $gray;
+        display: block;
+    }
+}
+
+.error-message {
+    background: $red-10;
+    border-radius: 4px;
+    color: $red;
+    padding: 2rem;
+    text-align: center;
+
+    svg {
+        height: 24px;
+        margin-bottom: .5rem;
+        width: 24px;
+    }
+}
+
+// Daily form section
+.daily-form-section {
+    background: $white;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, .1);
+    padding: 2rem;
+
+    h2 {
+        color: $grayer;
+        margin-bottom: 1.5rem;
+    }
+}
+
+.form-field {
+    margin-bottom: 1.5rem;
+
+    label {
+        color: $grayer;
+        display: block;
+        font-weight: 600;
+        margin-bottom: .5rem;
+    }
+
+    textarea {
+        border: 1px solid $gray-light;
+        border-radius: 4px;
+        font-family: inherit;
+        padding: .75rem;
+        resize: vertical;
+        width: 100%;
+
+        &:focus {
+            border-color: $primary;
+            outline: none;
+        }
+    }
+}
+
+.mood-selector {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.mood-option {
+    background: $white;
+    border: 3px solid $gray-light;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, .05);
+    cursor: pointer;
+    padding: .75rem 1.25rem;
+    transition: all .2s;
+
+    &:hover {
+        background: $primary-10;
+        border-color: $primary-light;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, .1);
+        transform: translateY(-2px);
+    }
+
+    &.selected {
+        background: $primary-25;
+        border-color: $primary;
+        box-shadow: 0 0 0 4px rgba($primary, .2);
+        transform: scale(1.05);
+    }
+
+    input {
+        display: none;
+    }
+
+    .mood-emoji {
+        display: inline-block;
+        font-size: 2rem;
+        margin-right: .75rem;
+    }
+
+    .mood-text {
+        font-size: .9rem;
+        font-weight: 500;
+    }
+}
+
+.form-actions {
+    margin-top: 2rem;
+
+    .btn-primary {
+        background: $primary;
+        border: 1px solid $primary;
+        border-radius: 4px;
+        color: $white;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 500;
+        min-width: 150px;
+        padding: .75rem 1.5rem;
+        transition: all .2s;
+
+        &:hover:not(:disabled) {
+            background: darken($primary, 10%);
+            border-color: darken($primary, 10%);
+        }
+
+        &:disabled {
+            cursor: not-allowed;
+            opacity: .5;
+        }
+    }
+}
+
+// Response sent view
+.daily-response-sent {
+    background: $white;
+    border-radius: 4px;
+    padding: 2rem;
+    text-align: center;
+
+    .success-icon svg {
+        color: $primary;
+        height: 60px;
+        margin-bottom: 1rem;
+        width: 60px;
+    }
+
+    h2 {
+        color: $primary;
+        margin-bottom: 2rem;
+    }
+
+    .btn-secondary {
+        background: $whitish;
+        border: 1px solid $gray-light;
+        border-radius: 4px;
+        color: $gray;
+        cursor: pointer;
+        font-size: .9rem;
+        font-weight: 500;
+        margin-top: 1rem;
+        padding: .5rem 1.5rem;
+        transition: all .2s;
+
+        &:hover {
+            background: $white;
+            border-color: $gray;
+            color: $grayer;
+        }
+    }
+}
+
+.response-summary {
+    margin: 0 auto 2rem;
+    max-width: 600px;
+    text-align: left;
+}
+
+.response-item {
+    background: $mass-white;
+    border-radius: 4px;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+
+    h4 {
+        color: $grayer;
+        font-size: .9rem;
+        font-weight: 600;
+        margin-bottom: .5rem;
+    }
+
+    p {
+        color: $gray;
+        margin: 0;
+
+        &.blockers-text {
+            color: $red;
+        }
+    }
+}
+
+.mood-display {
+    align-items: center;
+    display: flex;
+    gap: .5rem;
+
+    .mood-emoji {
+        font-size: 1.5rem;
+    }
+}
+
+// Team summary
+.summary-header {
+    margin-bottom: 2rem;
+
+    h2 {
+        color: $grayer;
+        margin-bottom: 1.5rem;
+    }
+}
+
+.summary-stats {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+}
+
+.stat-card {
+    background: $white;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, .1);
+    padding: 1.5rem;
+    text-align: center;
+
+    .stat-number {
+        color: $primary;
+        font-size: 2rem;
+        font-weight: bold;
+        margin-bottom: .5rem;
+    }
+
+    .stat-label {
+        color: $gray;
+        font-size: .9rem;
+    }
+
+    &.has-blockers .stat-number {
+        color: $red;
+    }
+}
+
+// Mood chart
+.mood-chart {
+    background: $white;
+    border-radius: 4px;
+    margin-bottom: 2rem;
+    padding: 2rem;
+
+    h3 {
+        color: $grayer;
+        margin-bottom: 1.5rem;
+    }
+}
+
+.mood-bars {
+    align-items: flex-end;
+    display: flex;
+    height: 200px;
+    justify-content: space-around;
+}
+
+.mood-bar {
+    align-items: center;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    max-width: 80px;
+}
+
+.bar-container {
+    background: $whitish;
+    border-radius: 4px 4px 0 0;
+    height: 150px;
+    position: relative;
+    width: 60px;
+
+    .bar-fill {
+        background: $primary-light;
+        border-radius: 4px 4px 0 0;
+        bottom: 0;
+        position: absolute;
+        transition: height .3s ease;
+        width: 100%;
+    }
+}
+
+.bar-label {
+    margin-top: .5rem;
+    text-align: center;
+
+    .emoji {
+        display: block;
+        font-size: 1.5rem;
+        margin-bottom: .25rem;
+    }
+
+    .count {
+        color: $gray;
+        font-size: .9rem;
+    }
+}
+
+// Color classes for mood bars
+.mood-great { background: $color-link-green; }
+.mood-good { background: $color-link-green; }
+.mood-neutral { background: $color-link-yellow; }
+.mood-bad { background: $color-link-orange; }
+.mood-terrible { background: $color-link-red; }
+
+// Team responses
+.team-responses {
+    h3 {
+        color: $grayer;
+        margin-bottom: 1.5rem;
+    }
+}
+
+.response-card {
+    background: $white;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, .1);
+    margin-bottom: 1rem;
+
+    &.has-blockers {
+        border-left: 4px solid $red;
+    }
+}
+
+.card-header {
+    align-items: center;
+    border-bottom: 1px solid $gray-light;
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem;
+
+    .mood-emoji {
+        font-size: 1.5rem;
+    }
+}
+
+.user-info {
+    align-items: center;
+    display: flex;
+    gap: 1rem;
+
+    .avatar-wrapper {
+        flex-shrink: 0;
+        position: relative;
+
+        .avatar {
+            border: 2px solid $gray-light;
+            border-radius: 50%;
+            height: 40px;
+            object-fit: cover;
+            width: 40px;
+        }
+
+        .avatar-placeholder {
+            align-items: center;
+            background: $primary;
+            border: 2px solid $primary;
+            border-radius: 50%;
+            color: $white;
+            display: flex;
+            font-size: 1.2rem;
+            font-weight: 600;
+            height: 40px;
+            justify-content: center;
+            text-transform: uppercase;
+            width: 40px;
+        }
+    }
+
+    .user-details {
+        display: flex;
+        flex-direction: column;
+        gap: .25rem;
+    }
+
+    .user-name {
+        color: $grayer;
+        font-size: 1rem;
+        font-weight: 600;
+    }
+
+    .response-time {
+        color: $gray;
+        font-size: .85rem;
+    }
+}
+
+.card-content {
+    padding: 1rem;
+}
+
+.response-section {
+    margin-bottom: 1rem;
+
+    &:last-child {
+        margin-bottom: 0;
+    }
+
+    h5 {
+        align-items: center;
+        color: $grayer;
+        display: flex;
+        font-size: .9rem;
+        font-weight: 600;
+        gap: .5rem;
+        margin-bottom: .5rem;
+
+        svg {
+            color: $red;
+            height: 16px;
+            width: 16px;
+        }
+    }
+
+    p {
+        color: $gray;
+        margin: 0;
+        white-space: pre-wrap;
+    }
+
+    &.blockers-section p {
+        color: $red;
+    }
+}
+
+// Pending members
+.pending-members {
+    background: $white;
+    border-radius: 4px;
+    margin-top: 2rem;
+    padding: 2rem;
+
+    h3 {
+        color: $grayer;
+        margin-bottom: 1.5rem;
+    }
+}
+
+.pending-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+}
+
+.pending-member {
+    align-items: center;
+    background: $whitish;
+    border-radius: 4px;
+    display: flex;
+    gap: .75rem;
+    padding: .75rem;
+    transition: background .2s;
+
+    &:hover {
+        background: $white;
+    }
+
+    .avatar-wrapper {
+        flex-shrink: 0;
+        position: relative;
+
+        .avatar {
+            border: 2px solid $gray-light;
+            border-radius: 50%;
+            height: 32px;
+            object-fit: cover;
+            width: 32px;
+        }
+
+        .avatar-placeholder {
+            align-items: center;
+            background: $primary;
+            border: 2px solid $primary;
+            border-radius: 50%;
+            color: $white;
+            display: flex;
+            font-size: .9rem;
+            font-weight: 600;
+            height: 32px;
+            justify-content: center;
+            text-transform: uppercase;
+            width: 32px;
+        }
+    }
+
+    .member-name {
+        color: $grayer;
+        font-size: .9rem;
+        font-weight: 500;
+    }
+}
+
+// Empty state
+.empty-state {
+    padding: 4rem 2rem;
+    text-align: center;
+
+    .empty-icon svg {
+        color: $gray-light;
+        height: 80px;
+        margin-bottom: 1rem;
+        width: 80px;
+    }
+
+    h3 {
+        color: $grayer;
+        margin-bottom: .5rem;
+    }
+
+    p {
+        color: $gray;
+        margin-bottom: 1.5rem;
+    }
+}
+
+// Sidebar menu
+.daily-scrum-menu {
+    padding: 1.5rem;
+
+    h3 {
+        color: $grayer;
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+    }
+
+    .menu-section {
+        margin-bottom: 2rem;
+
+        h4 {
+            color: $gray;
+            font-size: .9rem;
+            font-weight: 600;
+            margin-bottom: .75rem;
+        }
+    }
+}
+
+.status-complete {
+    align-items: center;
+    color: $primary;
+    display: flex;
+    gap: .5rem;
+
+    svg {
+        height: 20px;
+        width: 20px;
+    }
+}
+
+.status-pending {
+    align-items: center;
+    color: $color-link-orange;
+    display: flex;
+    gap: .5rem;
+
+    svg {
+        height: 20px;
+        width: 20px;
+    }
+}
+
+.stats-list {
+    .stat {
+        border-bottom: 1px solid $gray-light;
+        display: flex;
+        justify-content: space-between;
+        padding: .5rem 0;
+
+        &:last-child {
+            border-bottom: none;
+        }
+
+        .label {
+            color: $gray;
+            font-size: .9rem;
+        }
+
+        .value {
+            color: $grayer;
+            font-weight: 600;
+
+            &.blockers {
+                color: $red;
+            }
+        }
+    }
+}
+
+// Responsive
+@media (max-width: 768px) {
+    .daily-scrum {
+        padding: 1rem;
+    }
+
+    .date-selector-wrapper {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .date-controls {
+        justify-content: center;
+        order: 1;
+        width: 100%;
+    }
+    .actions-wrapper {
+        flex-wrap: wrap;
+        justify-content: center;
+        order: 2;
+        width: 100%;
+
+        .btn-secondary,
+        .btn-primary {
+            flex: 1;
+            justify-content: center;
+            min-width: 140px;
+        }
+    }
+
+    .summary-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .mood-bars {
+        height: 150px;
+    }
+
+    .bar-container {
+        height: 120px;
+        width: 40px;
+    }
+
+    .bar-label .emoji {
+        font-size: 1.2rem;
+    }
+}

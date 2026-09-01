@@ -1,0 +1,68 @@
+//- This source code is licensed under the terms of the
+//- GNU Affero General Public License found in the LICENSE file in
+//- the root directory of this source tree.
+//-
+//- Copyright (c) 2021-present Kaleidos INC
+
+//- En planningpoker-members.jade, actualiza la estructura completa:
+
+.row.member(ng-repeat="user in memberships | membersFilter:filtersQ:filtersRole")
+    .username
+        .avatar
+            img(tg-avatar="user", tg-bo-alt="user.full_name_display")
+
+            .avatar-data
+                a.name(
+                    tg-nav="user-profile:username=user.username",
+                    title="{{::user.full_name_display}}"
+                ) {{::user.full_name_display}}
+                    tg-svg(
+                        ng-if="user.id == owner"
+                        svg-icon="icon-badge"
+                        svg-title-translate="COMMON.OWNER"
+                    )
+
+                span.position {{::user.role_name}}
+
+    // Columna Story
+    .attribute.attribute-name
+        span(ng-if="!selectedStoryForMembers")
+            tg-svg(
+                svg-icon="icon-briefcase",
+                svg-title-translate="PLANNING_POKER.COLUMN_STORY"
+            )
+        span(ng-if="selectedStoryForMembers" style="display: block; text-align: center; margin-left: 1rem; font-weight: bold;") 
+            | {{selectedStoryForMembers.subject || ('Historia ' + selectedStoryForMembers.id)}}
+
+    // Columna Estimation
+    .attribute
+        span(ng-if="!selectedStoryForMembers || !estimationsByUser[user.id]") 
+            tg-svg(
+                svg-icon="icon-iocaine",
+                svg-title-translate="PLANNING_POKER.COLUMN_ESTIMATION"
+            )
+        span(
+            ng-if="selectedStoryForMembers && estimationsByUser[user.id]" 
+            style="display: block; text-align: center; margin-left: 1rem; font-weight: bold; font-size: 1.2em; color: #4CAF50;"
+        ) {{ estimationsByUser[user.id] }}
+
+    // Columna Faltan por votar (solo mostrar en primera fila)
+    .attribute(style="text-align: center;")
+        span(ng-if="$first && selectedStoryForMembers") {{ missingVotes || 0 }}
+        span(ng-if="!$first || !selectedStoryForMembers") --
+
+    // Columna Consenso
+    .attribute(style="text-align: center;")
+        span(ng-if="!allVoted") --
+        span(ng-if="allVoted && !hasConsensus" style="color: #FF9800; font-weight: bold; font-size: 1.2em;") ⚠️
+        span(ng-if="hasConsensus" style="color: #4CAF50; font-weight: bold;") ✓
+
+    // Columna Estimación Final
+    .attribute(style="text-align: center;")
+        span(ng-if="!hasConsensus") --
+        span(ng-if="hasConsensus" style="font-weight: bold; color: #4CAF50;") {{ consensusValue }}
+
+    // Columna Historia Estimada
+    .attribute(style="text-align: center;")
+        span(ng-if="!hasConsensus") ❌
+        span(ng-if="hasConsensus" style="color: #4CAF50;") ✅

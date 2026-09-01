@@ -1,0 +1,74 @@
+//- This source code is licensed under the terms of the
+//- GNU Affero General Public License found in the LICENSE file in
+//- the root directory of this source tree.
+//-
+//- Copyright (c) 2021-present Kaleidos INC
+
+section.table-planningpoker.basic-table
+    header.row.planningpoker-header
+        div.username
+        div.member-stats
+            div.attribute.attribute-name
+                span(translate="PLANNING_POKER.COLUMN_STORY")
+                div.tooltip.attribute-explanation
+                    span(translate="PLANNING_POKER.EXPLANATION_COLUMN_STORY")
+            div.attribute
+                span(translate="PLANNING_POKER.COLUMN_ESTIMATION")
+                div.tooltip.attribute-explanation
+                    span(translate="PLANNING_POKER.EXPLANATION_COLUMN_ESTIMATION")
+            div.attribute
+                span(translate="PLANNING_POKER.COLUMN_MISSING_VOTES")
+                div.tooltip.attribute-explanation
+                    span(translate="PLANNING_POKER.EXPLANATION_COLUMN_MISSING_VOTES")
+            div.attribute
+                span(translate="PLANNING_POKER.COLUMN_CONSENSUS")
+                div.tooltip.attribute-explanation
+                    span(translate="PLANNING_POKER.EXPLANATION_COLUMN_CONSENSUS")
+            div.attribute
+                span(translate="PLANNING_POKER.COLUMN_FINAL_ESTIMATION")
+                div.tooltip.attribute-explanation
+                    span(translate="PLANNING_POKER.EXPLANATION_COLUMN_FINAL_ESTIMATION")
+            div.attribute
+                span(translate="PLANNING_POKER.COLUMN_STORY_ESTIMATED")
+                div.tooltip.attribute-explanation
+                    span(translate="PLANNING_POKER.EXPLANATION_COLUMN_STORY_ESTIMATED")
+
+    div(ng-if="currentUser")
+        tg-planning-poker-current-user
+
+
+h2(ng-show="memberships.length")
+    span(translate="PLANNING_POKER.SECTION_TITLE_TEAM")
+    span  {{filtersRole.name || ("PLANNING_POKER.SECTION_FILTER_ALL" | translate)}}
+
+p(ng-if="!memberships.length", style="color: gray; font-style: italic; margin: 1rem 0;")
+  | No hay más miembros en este proyecto aparte de ti
+
+//- Selector general de historia para todos los miembros
+div(style="margin: 1rem 0; padding: 0.5rem; display: flex; justify-content: center; align-items: center; background: #f5f5f5; border: 1px solid #ccc; border-radius: 4px;")
+    label(style="font-weight: bold; margin-right: 0.5rem; white-space: nowrap;")
+        span(translate="PLANNING_POKER.SELECT_GLOBAL_STORY")
+    select(
+        ng-model="selectedStoryForMembers",
+        ng-options="story as story.subject for story in sessionUserStories track by story.id",
+        ng-show="sessionUserStories && sessionUserStories.length > 0",
+        style="padding: 0.4rem; border: 1px solid #ccc; min-width: 250px;"
+    )
+        option(value="") Selecciona una historia para todos los miembros...
+
+    span(ng-show="!sessionUserStories || sessionUserStories.length === 0", style="color: gray; font-style: italic; margin-left: 1rem;")
+        | No hay historias en esta sesión
+    
+    //- Botón de actualizar estimaciones - CORREGIDO
+    button(
+        ng-if="selectedStoryForMembers"
+        ng-click="loadEstimations()"
+        style="margin-left: 1rem; padding: 0.4rem 0.8rem; background: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer;"
+        title="Actualizar estimaciones"
+    )
+        span Actualizar
+
+//- Tabla de miembros del Planning Poker
+section.table-planningpoker.basic-table(
+    tg-planning-poker-members
+)

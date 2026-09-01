@@ -1,0 +1,120 @@
+//************************
+//** COLORS
+//************************
+
+$primary: #e5be01;        // Amarillo claro
+$primary-75: lighten($primary, 20%);  // Color más claro
+$primary-50: lighten($primary, 40%);  // Color más claro
+$primary-25: lighten($primary, 60%);  // Color más claro
+$primary-10: lighten($primary, 80%);  // Color más claro
+
+$secondary: #bb9b10;      // Amarillo medio
+$secondary-75: lighten($secondary, 20%);
+$secondary-50: lighten($secondary, 40%);
+$secondary-25: lighten($secondary, 60%);
+
+$tertiary: #937a15;       // Amarillo oscuro
+
+$red:  #FF6363;
+$red-25: #FFA5A5;
+$red-10: #FFE7E7;
+
+$grey-02: #F9F9FB;
+$grey-05: #F1F1F4;
+$grey-10: #E2E3E9;
+$grey-20: #C6C6D4;
+$grey-30: #A9AABC;
+$grey-40: #8D8EA5;
+$grey-50: #70728F;
+$grey-60: #5A5B72;
+$grey-70: #434456;
+$grey-80: #2D2D39;
+$grey-90: #16171D;
+
+
+// Color aliases for retrocompatibility
+$black: #000;
+$blackish: $grey-90;
+$grayer: $grey-70;
+$gray: $grey-60;
+$gray-light: $grey-50;
+$gray-lighter: $grey-30;
+$whitish: $grey-10;
+$mass-white: $grey-05;
+$white: #fff;
+
+// Primary colors
+$primary-light: $primary-75;
+$primary-lighter: $primary-10;
+$primary-dark: $primary-50;
+$primary-background: $primary-25;
+
+// Secondary colors
+$secondary-light: $secondary-50;
+$secondary-dark: #91B011;
+
+//Status colors
+$green-light: #D1DFC5;
+$red-light: lighten($red, 12%);
+$my-sin: #fcaf3e;
+$yellow-green: #9dce0a;
+
+//Card color
+$card: #fff8e4;
+$card-hover: #f1e8cd;
+$card-dark: #cfc29b;
+
+$tribe-primary: #107a8a;
+$tribe-secondary: darken($tribe-primary, 10%);
+
+$top-icon-color: #11241f;
+$dropdown-color: rgba(darken($grayer, 20%), 1);
+$code-bg: #272822;
+
+$highlight: #E5F390;
+
+// TAIGA 6
+
+// Primary colors
+$color-solid-primary: #e5be01;  // Color principal (amarillo brillante)
+$color-link-primary: #d3b12e;   // Color secundario (amarillo más oscuro)
+$color-link-tertiary: #c1a442;  // Color terciario (amarillo mostaza)
+
+// Grayscale
+$color-gray100: #f1f1f1;        // Gris claro
+$color-gray200: #e0e0e0;        // Gris más claro
+$color-gray300: #c0c0c0;        // Gris pálido
+$color-gray400: #a0a0a0;        // Gris intermedio
+$color-gray800: #737373;        // Gris oscuro
+
+$color-black600: #897f69;       // Gris oscuro intermedio
+$color-black700: #9c8b5e;       // Gris oscuro intermedio
+$color-black800: #af9751;       // Gris oscuro
+$color-black900: #c1a442;       // Gris más oscuro
+
+// State colors
+$color-link-red: #E44057;
+$color-link-orange: #EA7B4B;
+$color-link-yellow: #F6C95C;
+$color-link-green: #93C45D;
+$color-link-purple: #CA81BE;
+
+// State colors
+$color-solid-red: rgba($color-link-red, .25);
+$color-solid-orange: rgba($color-link-orange, .25);
+$color-solid-yellow: rgba($color-link-yellow, .25);
+$color-solid-green: rgba($color-link-green, .25);
+$color-solid-purple: rgba($color-link-purple, .25);
+
+$color-white: #FFFFFF;
+$color-black: #000000;
+
+//Helpers
+$default-tags: #A9AABC;
+
+//Loading colors
+$loading-color-1: #a8e440;
+$loading-color-2: #e4ce40;
+$loading-color-3: #e47c40;
+$loading-color-4: #e44057;
+$loading-color-5: #4056e4;

@@ -1,0 +1,72 @@
+// Campo para el nombre de la sesión
+.field(style="margin-bottom: 1rem")
+    label(for="session-name" style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: #495057") 
+        | Nombre de la sesión
+    input#session-name(
+        type="text"
+        name="name"
+        ng-model="obj.name"
+        placeholder="Ej: Sprint 1 - Estimación inicial"
+        required
+        style="width: 100%; padding: 0.5rem; border: 1px solid #dee2e6; border-radius: 4px; font-size: 1rem"
+    )
+
+    // Título de la sección
+    h3(style="color: #b58b00; font-weight: bold; margin-bottom: 1rem; font-size: 1.1rem; margin-top: 0") 
+        i.fa.fa-list-ul(style="margin-right: 0.5rem")
+        | Historias en Backlog
+
+    // Contenedor para el checkbox de seleccionar todas
+    .select-all-container(
+        ng-if="obj.availableUserStories.length > 0"
+        style="background-color: #f8f9fa; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; border: 1px solid #e9ecef"
+    )
+        .select-all-content(style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem")
+            label(style="display: flex; align-items: center; cursor: pointer; margin: 0; flex-shrink: 0")
+                input(
+                    type="checkbox", 
+                    ng-checked="selectAllStories", 
+                    ng-click="toggleSelectAllStories()"
+                    style="width: 18px; height: 18px; margin-right: 0.75rem; cursor: pointer"
+                )
+                span(style="font-weight: 500; color: #495057") 
+                    | Seleccionar todas
+            
+            span.selection-counter(style="color: #6c757d; font-size: 0.9rem; white-space: nowrap")
+                | (
+                span(ng-bind="getSelectedStories().length")
+                | /
+                span(ng-bind="obj.availableUserStories.length")
+                | )
+
+    // Lista de historias con mejor diseño
+    .stories-list(
+        ng-if="obj.availableUserStories.length > 0"
+        style="max-height: 300px; overflow-y: auto; overflow-x: hidden; border: 1px solid #dee2e6; border-radius: 8px; padding: 0.5rem; background-color: #ffffff"
+    )
+        .story-item(
+            ng-repeat="story in obj.availableUserStories track by story.id"
+            style="padding: 0.75rem 1rem; border-bottom: 1px solid #f1f3f5; transition: background-color 0.2s"
+            ng-style="{'background-color': story.selected ? '#fff3cd' : 'transparent'}"
+        )
+            label(style="display: flex; align-items: center; cursor: pointer; margin: 0")
+                input(
+                    type="checkbox", 
+                    ng-model="story.selected", 
+                    ng-change="checkAllSelected()"
+                    style="width: 16px; height: 16px; margin-right: 0.75rem; cursor: pointer"
+                )
+                .story-content(style="flex: 1")
+                    .story-header(style="display: flex; align-items: center")
+                        span.story-ref(style="background-color: #b58b00; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.85rem; font-weight: bold; margin-right: 0.75rem")
+                            | #
+                            span(ng-bind="story.ref")
+                        span.story-title(style="font-weight: 500; color: #212529", ng-bind="story.title")
+
+    // Mensaje cuando no hay historias
+    .empty-state(
+        ng-if="!obj.availableUserStories || obj.availableUserStories.length == 0"
+        style="text-align: center; padding: 3rem; color: #6c757d"
+    )
+        i.fa.fa-inbox(style="font-size: 3rem; margin-bottom: 1rem; display: block; opacity: 0.5")
+        p(style="margin: 0") No hay historias disponibles en el backlog

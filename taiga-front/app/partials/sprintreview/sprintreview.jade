@@ -1,0 +1,367 @@
+//- app/partials/sprintreview/sprintreview.jade
+//- Template principal para Sprint Review
+
+div.wrapper(
+    ng-controller="SprintReviewController as ctrl"
+    ng-init="section='sprint-review'"
+)
+    tg-project-menu
+
+    sidebar.menu-secondary.sidebar(tg-sprint-review-menu)
+        
+    section.main.sprint-review
+        header
+            include ../includes/components/mainTitle
+            
+        .sprint-review-wrapper
+            // Sprint selector
+            .sprint-selector-wrapper
+                .sprint-selector
+                    label {{ 'SPRINT_REVIEW.SELECT_SPRINT' | translate }}
+                    select.sprint-dropdown(
+                        ng-model="selectedSprintId"
+                        ng-change="loadSprintReview()"
+                        ng-options="sprint.id as sprint.name for sprint in sprints"
+                        ng-disabled="loading"
+                    )
+                        option(value="" disabled) {{ 'SPRINT_REVIEW.CHOOSE_SPRINT' | translate }}
+                
+                .actions-wrapper
+                    button.btn.btn-primary(
+                        ng-click="exportToExcel()"
+                        ng-if="selectedSprintId && (isScrumMaster || isProductOwner)"
+                        title="{{ 'SPRINT_REVIEW.EXPORT_EXCEL' | translate }}"
+                    )
+                        tg-svg(svg-icon="icon-download")
+                        span {{ 'SPRINT_REVIEW.EXPORT' | translate }}
+            
+            // Loading
+            .loading-spinner(ng-if="loading")
+                img(src="/#{v}/svg/spinner-circle.svg", alt="loading")
+                span {{ 'COMMON.LOADING' | translate }}
+            
+            // Error message
+            .error-message(ng-if="error && !loading")
+                tg-svg(svg-icon="icon-error")
+                p {{ error }}
+            
+            // No sprint selected
+            .empty-state(ng-if="!loading && !selectedSprintId")
+                .empty-icon
+                    tg-svg(svg-icon="icon-sprint-empty")
+                h3 {{ 'SPRINT_REVIEW.NO_SPRINT_SELECTED' | translate }}
+                p {{ 'SPRINT_REVIEW.SELECT_SPRINT_TO_REVIEW' | translate }}
+            
+            // Sprint content
+            .sprint-content(ng-if="!loading && selectedSprintId && sprintData")
+                // Sprint header
+                .sprint-header
+                    .sprint-info
+                        h2 {{ sprintData.name }}
+                        .sprint-dates
+                            span {{ sprintData.start_date | date:'mediumDate' }}
+                            span.separator -
+                            span {{ sprintData.end_date | date:'mediumDate' }}
+                    
+                    .sprint-status(ng-if="metrics.approvals_count > 0")
+                        .approval-badge(ng-class="{'approved': metrics.approvals_count == metrics.total_feedbacks}")
+                            tg-svg(svg-icon="icon-check-circle" ng-if="metrics.approvals_count == metrics.total_feedbacks")
+                            tg-svg(svg-icon="icon-clock" ng-if="metrics.approvals_count < metrics.total_feedbacks")
+                            span {{ metrics.approvals_count }}/{{ metrics.total_feedbacks }} {{ 'SPRINT_REVIEW.APPROVALS' | translate }}
+                
+                // Tabs
+                .review-tabs
+                    .tab(
+                        ng-click="setActiveTab('overview')"
+                        ng-class="{'active': isActiveTab('overview')}"
+                    ) {{ 'SPRINT_REVIEW.TAB_OVERVIEW' | translate }}
+                    
+                    .tab(
+                        ng-click="setActiveTab('stories')"
+                        ng-class="{'active': isActiveTab('stories')}"
+                    ) {{ 'SPRINT_REVIEW.TAB_STORIES' | translate }} ({{ completedStories.length }})
+                    
+                    .tab(
+                        ng-click="setActiveTab('feedback')"
+                        ng-class="{'active': isActiveTab('feedback')}"
+                    ) {{ 'SPRINT_REVIEW.TAB_FEEDBACK' | translate }}
+                    
+                    .tab(
+                        ng-if="isScrumMaster || isProductOwner"
+                        ng-click="setActiveTab('team')"
+                        ng-class="{'active': isActiveTab('team')}"
+                    ) {{ 'SPRINT_REVIEW.TAB_TEAM' | translate }}
+                
+                // Tab content
+                .tab-content
+                    // Overview tab
+                    .overview-content(ng-show="isActiveTab('overview')")
+                        .metrics-grid
+                            .metric-card
+                                .metric-value {{ metrics.completion_rate }}%
+                                .metric-label {{ 'SPRINT_REVIEW.COMPLETION_RATE' | translate }}
+                                .progress-bar
+                                    .progress-fill(style="width: {{ metrics.completion_rate }}%")
+                            
+                            .metric-card
+                                .metric-value {{ metrics.completed_points }}
+                                .metric-label {{ 'SPRINT_REVIEW.POINTS_COMPLETED' | translate }}
+                                .metric-detail {{ metrics.total_points }} {{ 'SPRINT_REVIEW.TOTAL' | translate }}
+                            
+                            .metric-card(ng-if="metrics.avg_satisfaction > 0")
+                                .metric-value {{ metrics.avg_satisfaction }}
+                                .metric-label {{ 'SPRINT_REVIEW.AVG_SATISFACTION' | translate }}
+                                .satisfaction-bar
+                                    span.emoji(ng-repeat="i in [1,2,3,4,5]" ng-class="{'active': i <= metrics.avg_satisfaction}")
+                                        {{ i <= 2 ? '😕' : (i == 3 ? '😐' : '😊') }}
+                            
+                            .metric-card(ng-if="metrics.avg_code_quality > 0")
+                                .metric-value {{ metrics.avg_code_quality }}
+                                .metric-label {{ 'SPRINT_REVIEW.CODE_QUALITY' | translate }}
+                                .stars
+                                    tg-svg(
+                                        ng-repeat="star in [1,2,3,4,5]"
+                                        svg-icon="icon-star"
+                                        ng-class="getStarClass(star, metrics.avg_code_quality)"
+                                    )
+                    
+                    // Stories tab
+                    .stories-content(ng-show="isActiveTab('stories')")
+                        .story-list
+                            .story-card(
+                                ng-repeat="story in completedStories"
+                                ng-class="{'approved': feedbackForm.stories_feedback[story.id].approved}"
+                            )
+                                .story-header
+                                    .story-info
+                                        h4 {{ story.subject }}
+                                        .story-points
+                                            tg-svg(svg-icon="icon-points")
+                                            span {{ story.points }} {{ 'SPRINT_REVIEW.POINTS' | translate }}
+                                    
+                                    .story-approval(ng-if="!existingFeedback")
+                                        label.approval-checkbox
+                                            input(
+                                                type="checkbox"
+                                                ng-model="feedbackForm.stories_feedback[story.id].approved"
+                                            )
+                                            span {{ 'SPRINT_REVIEW.APPROVE_STORY' | translate }}
+                                
+                                .story-description(ng-if="story.description")
+                                    p {{ story.description | limitTo:200 }}{{ story.description.length > 200 ? '...' : '' }}
+                                
+                                .story-feedback(ng-if="!existingFeedback")
+                                    .rating-section
+                                        label {{ 'SPRINT_REVIEW.RATE_STORY' | translate }}
+                                        .star-rating
+                                            tg-svg(
+                                                ng-repeat="star in [1,2,3,4,5]"
+                                                svg-icon="icon-star"
+                                                ng-click="updateStoryRating(story.id, star)"
+                                                ng-class="getStarClass(star, feedbackForm.stories_feedback[story.id].rating)"
+                                                class="clickable"
+                                            )
+                                    
+                                    .comment-section
+                                        textarea(
+                                            ng-model="feedbackForm.stories_feedback[story.id].comments"
+                                            placeholder="{{ 'SPRINT_REVIEW.STORY_COMMENTS_PLACEHOLDER' | translate }}"
+                                            rows="2"
+                                        )
+                                
+                                .story-existing-feedback(ng-if="existingFeedback && feedbackForm.stories_feedback[story.id]")
+                                    .feedback-item(ng-if="feedbackForm.stories_feedback[story.id].approved")
+                                        tg-svg(svg-icon="icon-check")
+                                        span {{ 'SPRINT_REVIEW.STORY_APPROVED' | translate }}
+                                    
+                                    .feedback-item(ng-if="feedbackForm.stories_feedback[story.id].rating")
+                                        span {{ 'SPRINT_REVIEW.YOUR_RATING' | translate }}:
+                                        .stars-small
+                                            tg-svg(
+                                                ng-repeat="star in [1,2,3,4,5]"
+                                                svg-icon="icon-star"
+                                                ng-class="getStarClass(star, feedbackForm.stories_feedback[story.id].rating)"
+                                            )
+                                    
+                                    .feedback-item(ng-if="feedbackForm.stories_feedback[story.id].comments")
+                                        p.comment-text {{ feedbackForm.stories_feedback[story.id].comments }}
+                    
+                    // Feedback tab
+                    .feedback-content(ng-show="isActiveTab('feedback')")
+                        // Ya enviaste feedback
+                        .feedback-sent(ng-if="existingFeedback")
+                            .success-message
+                                tg-svg(svg-icon="icon-check-circle")
+                                h3 {{ 'SPRINT_REVIEW.FEEDBACK_ALREADY_SENT' | translate }}
+                                p {{ 'SPRINT_REVIEW.FEEDBACK_THANKS' | translate }}
+                            
+                            .feedback-summary
+                                h4 {{ 'SPRINT_REVIEW.YOUR_FEEDBACK_SUMMARY' | translate }}
+                                
+                                .summary-item
+                                    .label {{ 'SPRINT_REVIEW.SATISFACTION' | translate }}:
+                                    .value
+                                        span.emoji {{ satisfactionOptions[existingFeedback.satisfaction_level - 1].emoji }}
+                                        span {{ existingFeedback.satisfaction_display }}
+                                
+                                .summary-item(ng-if="existingFeedback.code_quality_rating")
+                                    .label {{ 'SPRINT_REVIEW.CODE_QUALITY' | translate }}:
+                                    .value {{ existingFeedback.code_quality_rating }}/5
+                                
+                                .summary-item(ng-if="existingFeedback.functionality_rating")
+                                    .label {{ 'SPRINT_REVIEW.FUNCTIONALITY' | translate }}:
+                                    .value {{ existingFeedback.functionality_rating }}/5
+                                
+                                .summary-item
+                                    .label {{ 'SPRINT_REVIEW.GENERAL_FEEDBACK' | translate }}:
+                                    .value
+                                        p {{ existingFeedback.general_feedback }}
+                            
+                            button.btn.btn-secondary(
+                                ng-click="editFeedback()"
+                            ) {{ 'SPRINT_REVIEW.EDIT_FEEDBACK' | translate }}
+                        
+                        // Formulario de feedback
+                        form.feedback-form(
+                            ng-if="!existingFeedback"
+                            name="reviewForm"
+                            ng-submit="submitFeedback()"
+                        )
+                            h3 {{ 'SPRINT_REVIEW.PROVIDE_FEEDBACK' | translate }}
+                            
+                            .form-section
+                                h4 {{ 'SPRINT_REVIEW.OVERALL_SATISFACTION' | translate }}
+                                .satisfaction-selector
+                                    label.satisfaction-option(
+                                        ng-repeat="option in satisfactionOptions"
+                                        ng-class="{'selected': isSatisfactionSelected(option.value)}"
+                                        ng-click="setSatisfactionLevel(option.value)"
+                                    )
+                                        span.emoji {{ option.emoji }}
+                                        span.text {{ option.text | translate }}
+                            
+                            .form-row
+                                .form-field
+                                    label {{ 'SPRINT_REVIEW.CODE_QUALITY' | translate }}
+                                    .rating-selector
+                                        button.rating-btn(
+                                            ng-repeat="rating in ratingOptions"
+                                            type="button"
+                                            ng-click="feedbackForm.code_quality_rating = rating"
+                                            ng-class="{'selected': feedbackForm.code_quality_rating === rating}"
+                                        ) {{ rating }}
+                                
+                                .form-field
+                                    label {{ 'SPRINT_REVIEW.FUNCTIONALITY' | translate }}
+                                    .rating-selector
+                                        button.rating-btn(
+                                            ng-repeat="rating in ratingOptions"
+                                            type="button"
+                                            ng-click="feedbackForm.functionality_rating = rating"
+                                            ng-class="{'selected': feedbackForm.functionality_rating === rating}"
+                                        ) {{ rating }}
+                            
+                            .form-field
+                                label {{ 'SPRINT_REVIEW.GENERAL_FEEDBACK' | translate }}
+                                textarea(
+                                    ng-model="feedbackForm.general_feedback"
+                                    required
+                                    rows="4"
+                                    placeholder="{{ 'SPRINT_REVIEW.GENERAL_FEEDBACK_PLACEHOLDER' | translate }}"
+                                )
+                            
+                            // Sección de aprobación para Product Owner
+                            .approval-section(ng-if="isProductOwner")
+                                h4 {{ 'SPRINT_REVIEW.SPRINT_APPROVAL' | translate }}
+                                
+                                .approval-actions
+                                    button.btn.btn-success(
+                                        type="button"
+                                        ng-click="approveSprint()"
+                                    )
+                                        tg-svg(svg-icon="icon-check")
+                                        span {{ 'SPRINT_REVIEW.APPROVE_SPRINT' | translate }}
+                                    
+                                    button.btn.btn-danger(
+                                        type="button"
+                                        ng-click="rejectSprint()"
+                                    )
+                                        tg-svg(svg-icon="icon-close")
+                                        span {{ 'SPRINT_REVIEW.REJECT_SPRINT' | translate }}
+                                
+                                .changes-field(ng-if="feedbackForm.sprint_approved === false")
+                                    label {{ 'SPRINT_REVIEW.CHANGES_REQUIRED' | translate }}
+                                    textarea(
+                                        ng-model="feedbackForm.requires_changes"
+                                        rows="3"
+                                        placeholder="{{ 'SPRINT_REVIEW.CHANGES_REQUIRED_PLACEHOLDER' | translate }}"
+                                    )
+                            
+                            .form-actions
+                                button.btn.btn-primary(
+                                    type="submit"
+                                    ng-disabled="reviewForm.$invalid || submitting"
+                                )
+                                    span(ng-if="!submitting") {{ 'SPRINT_REVIEW.SUBMIT_FEEDBACK' | translate }}
+                                    span(ng-if="submitting") {{ 'SPRINT_REVIEW.SUBMITTING' | translate }}
+                    
+                    // Team tab (solo para SM y PO)
+                    .team-content(ng-show="isActiveTab('team')" ng-if="isScrumMaster || isProductOwner")
+                        h3 {{ 'SPRINT_REVIEW.TEAM_FEEDBACK' | translate }}
+                        
+                        .feedback-list(ng-if="allFeedbacks && allFeedbacks.length > 0")
+                            .feedback-card(ng-repeat="feedback in allFeedbacks | orderBy:'-created_at'")
+                                .feedback-header
+                                    .user-info
+                                        img.avatar(
+                                            tg-avatar="feedback.user"
+                                            alt="{{ feedback.user_name }}"
+                                        )
+                                        .user-details
+                                            .user-name {{ feedback.user_name }}
+                                            .user-role {{ feedback.user_role }}
+                                    
+                                    .feedback-status
+                                        .satisfaction-badge(ng-class="getStatusClass(feedback.satisfaction_level)")
+                                            span.emoji {{ satisfactionOptions[feedback.satisfaction_level - 1].emoji }}
+                                            span {{ feedback.satisfaction_display }}
+                                
+                                .feedback-content
+                                    .metrics-row
+                                        .metric(ng-if="feedback.code_quality_rating")
+                                            span.label {{ 'SPRINT_REVIEW.CODE_QUALITY' | translate }}:
+                                            .stars-small
+                                                tg-svg(
+                                                    ng-repeat="star in [1,2,3,4,5]"
+                                                    svg-icon="icon-star"
+                                                    ng-class="getStarClass(star, feedback.code_quality_rating)"
+                                                )
+                                        
+                                        .metric(ng-if="feedback.functionality_rating")
+                                            span.label {{ 'SPRINT_REVIEW.FUNCTIONALITY' | translate }}:
+                                            .stars-small
+                                                tg-svg(
+                                                    ng-repeat="star in [1,2,3,4,5]"
+                                                    svg-icon="icon-star"
+                                                    ng-class="getStarClass(star, feedback.functionality_rating)"
+                                                )
+                                        
+                                        .metric(ng-if="feedback.average_story_rating > 0")
+                                            span.label {{ 'SPRINT_REVIEW.AVG_STORY_RATING' | translate }}:
+                                            span.value {{ feedback.average_story_rating }}/5
+                                    
+                                    .feedback-text
+                                        p {{ feedback.general_feedback }}
+                                    
+                                    .approval-status(ng-if="feedback.sprint_approved !== null")
+                                        .approved(ng-if="feedback.sprint_approved")
+                                            tg-svg(svg-icon="icon-check-circle")
+                                            span {{ 'SPRINT_REVIEW.SPRINT_APPROVED_BY' | translate }}
+                                        
+                                        .rejected(ng-if="!feedback.sprint_approved && feedback.requires_changes")
+                                            tg-svg(svg-icon="icon-warning")
+                                            span {{ 'SPRINT_REVIEW.CHANGES_REQUESTED' | translate }}
+                                            p.changes-text {{ feedback.requires_changes }}
+                        
+                        .empty-feedback(ng-if="!allFeedbacks || allFeedbacks.length === 0")
+                            p {{ 'SPRINT_REVIEW.NO_FEEDBACK_YET' | translate }}
