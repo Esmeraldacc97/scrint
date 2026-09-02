@@ -34,32 +34,32 @@
                         select(
                             ng-model="$parent.sessionId"
                             ng-change="$parent.changeSession($parent.sessionId)"
-                            ng-options="session.id as (session.name || 'Sesión ' + session.id) for session in sessions"
+                            ng-options="session.id as (session.name || 'Session ' + session.id) for session in sessions"
                             ng-disabled="!sessions || sessions.length === 0"
                             style="padding: 0.5rem; border: 1px solid #ccc; background: white; width: 100%; max-width: 250px;"
                         )
-                            option(value="") -- Selecciona una sesión --
+                            option(value="") -- Select a session --
 
                         .export-controls(ng-show="canExport()")
                             button.btn.btn-primary.export-button(
                                 ng-click="exportToExcel()"
-                                title="Exportar sesión a Excel"
+                                title="Export session to Excel"
                             )
                                 svg.icon
                                     use(href="#icon-download")
-                                span.button-text Exportar a Excel
+                                span.button-text Export to Excel
 
                         div(ng-if="(!sessions || sessions.length === 0) && currentUser.role_name === 'Scrum Master'")
-                            p(style="color: gray; font-style: italic; margin: 0;") No hay sesiones activas disponibles.  
+                            p(style="color: gray; font-style: italic; margin: 0;") No active sessions available.  
 
                         button(
                             ng-if="currentUser.role_name === 'Scrum Master'"
                             ng-click="$root.$broadcast('genericform:new', { objType: 'planning', project: project })"
                             style="padding: 0.5rem 1rem; background: #2196F3; color: white; border: none; border-radius: 4px; font-weight: bold;"
-                        ) Crear nueva sesión
+                        ) Create new session
 
                         p(ng-if="currentUser.role_name !== 'Scrum Master'" style="color: darkred; font-style: italic; margin: 0;")
-                            | Solo el Scrum Master puede crear una nueva sesión de Planning Poker.
+                            | Only the Scrum Master can create a new Planning Poker session.
                     
                     //- Selector de historia (todos los roles)
                     select(
@@ -68,28 +68,28 @@
                         ng-show="sessionUserStories && sessionUserStories.length > 0",
                         style="margin-top: 1.5rem; padding: 0.5rem; border: 1px solid #ccc; background: white; display: block;"
                     )
-                        option(value="") Selecciona una historia...
+                        option(value="") Select a story...
                     
                     p(ng-show="!sessionUserStories || sessionUserStories.length === 0", style="color: gray; font-style: italic; margin-top: 1.5rem;")
-                        | No hay historias asignadas a esta sesión   
+                        | No stories assigned to this session   
 
                     //- Mensaje específico para Scrum Master
                     div(ng-if="currentUser.role_name === 'Scrum Master'" style="margin-top: 1rem; padding: 1rem; background: #f5f5f5; border-radius: 4px;")
                         p(style="margin: 0; font-style: italic;")
-                            | Como Scrum Master, puedes ver las estimaciones pero no participar en ellas.
+                            | As Scrum Master, you can view the estimates but not take part in them.
                         p(style="margin: 0.5rem 0 0 0;")
-                            | Selecciona una historia arriba y luego selecciona la misma en "Story for all team members" para ver las estimaciones del equipo.   
+                            | Select a story above, then pick the same one in "Story for all team members" to see the estimates from the team.   
 
                     //- Mostrar input y botón de estimación SOLO si el rol NO es PO, SM o Stakeholder
                     div(ng-if="currentUser.role_name !== 'Product Owner' && currentUser.role_name !== 'Scrum Master' && currentUser.role_name !== 'Stakeholder'")
                         div(style="margin-top: 1rem;")
                             label(style="display: block; margin-bottom: 0.5rem; font-weight: 500;") 
-                                | Selecciona tu estimación (Fibonacci)
+                                | Select your estimate (Fibonacci)
 
                             //- Mostrar si ya votó
                             p(ng-if="$parent.currentEstimations[$parent.selectedStory.id]" style="background: #e8f5e9; padding: 0.5rem; border-radius: 4px; margin-bottom: 0.5rem;")
-                                | Ya estimaste esta historia con: 
-                                strong {{ $parent.currentEstimations[$parent.selectedStory.id] }} puntos
+                                | You already estimated this story with: 
+                                strong {{ $parent.currentEstimations[$parent.selectedStory.id] }} points
 
                             //- Botones de Fibonacci
                             .fibonacci-buttons(style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem;")
@@ -103,7 +103,7 @@
                             
                             //- Mostrar valor seleccionado
                             p(ng-if="$parent.estimationValue !== null && $parent.estimationValue !== undefined" style="margin: 0.5rem 0;")
-                                | Valor seleccionado: 
+                                | Selected value: 
                                 strong {{ $parent.estimationValue }}
                             
                             //- Botón de enviar
@@ -113,12 +113,12 @@
                                 style="padding: 0.75rem 1.5rem; width: 100%; background-color: #4CAF50; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; transition: opacity 0.2s;"
                                 ng-style="{'opacity': (!$parent.selectedStory || $parent.estimationValue === null) ? '0.5' : '1', 'cursor': (!$parent.selectedStory || $parent.estimationValue === null) ? 'not-allowed' : 'pointer'}"
                             ) 
-                                span(ng-if="!$parent.currentEstimations[$parent.selectedStory.id]") Enviar estimación
-                                span(ng-if="$parent.currentEstimations[$parent.selectedStory.id]") Actualizar estimación
+                                span(ng-if="!$parent.currentEstimations[$parent.selectedStory.id]") Send estimate
+                                span(ng-if="$parent.currentEstimations[$parent.selectedStory.id]") Update estimate
 
                     //- Mensaje para roles sin permisos
                     p(ng-if="currentUser.role_name === 'Product Owner' || currentUser.role_name === 'Scrum Master' || currentUser.role_name === 'Stakeholder'" style="margin-top: 1rem; font-style: italic; color: gray;")
-                        | Tu rol ({{ currentUser.role_name }}) solo puede visualizar las estimaciones.
+                        | Your role ({{ currentUser.role_name }}) can only view the estimates.
                 
     // Columna Story
     .attribute.attribute-name
@@ -128,7 +128,7 @@
                 svg-title-translate="PLANNING_POKER.COLUMN_STORY"
             )
         span(ng-if="$parent.selectedStory" style="display: block; text-align: center; margin-left: 1rem; font-weight: bold;") 
-            | {{$parent.selectedStory.subject || ('Historia ' + $parent.selectedStory.id)}}
+            | {{$parent.selectedStory.subject || ('Story ' + $parent.selectedStory.id)}}
 
     // Columna Estimation
     .attribute
@@ -158,7 +158,7 @@
         span(ng-if="!$parent.hasConsensus") --
         span(ng-if="$parent.hasConsensus" style="font-weight: bold; color: #4CAF50;") {{ $parent.consensusValue }}
 
-    // Columna Historia Estimada
+    // Columna Story Estimada
     .attribute(style="text-align: center;")
         span(ng-if="!$parent.hasConsensus") ❌
         span(ng-if="$parent.hasConsensus" style="color: #4CAF50;") ✅

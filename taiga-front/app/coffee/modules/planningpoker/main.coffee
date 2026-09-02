@@ -77,15 +77,15 @@ class PlanningPokerController extends mixOf(taiga.Controller, taiga.PageMixin)
         # Definir sendEstimation en el scope
         @scope.sendEstimation = =>
             if not @scope.sessionId
-                @confirm.notify('error', null, null, "Debes seleccionar una sesión primero")
+                @confirm.notify('error', null, null, "You must select a session first")
                 return
                 
             if not @scope.selectedStory
-                @confirm.notify('error', null, null, "Debes seleccionar una historia primero")
+                @confirm.notify('error', null, null, "You must select a story first")
                 return
                 
             if not @scope.estimationValue? or @scope.estimationValue is null
-                @confirm.notify('error', null, null, "Debes seleccionar un valor de estimación")
+                @confirm.notify('error', null, null, "You must select an estimate value")
                 return
             
             # Validar Fibonacci
@@ -93,7 +93,7 @@ class PlanningPokerController extends mixOf(taiga.Controller, taiga.PageMixin)
             estimationInt = parseInt(@scope.estimationValue)
             
             if estimationInt not in fibonacciValues
-                @confirm.notify('error', null, null, "La estimación debe ser un valor de Fibonacci: 0, 1, 2, 3, 5, 8, 13, 20, 40, 100")
+                @confirm.notify('error', null, null, "The estimate must be a Fibonacci value: 0, 1, 2, 3, 5, 8, 13, 20, 40, 100")
                 return
             
             # Preparar datos
@@ -158,7 +158,7 @@ class PlanningPokerController extends mixOf(taiga.Controller, taiga.PageMixin)
                 , 10000
                 
             .catch (error) =>
-                errorMsg = error?.data?.error or error?.data?._error_message or "Error al enviar la estimación"
+                errorMsg = error?.data?.error or error?.data?._error_message or "Error sending the estimate"
                 @confirm.notify('error', null, null, errorMsg)
         
         # Exponer sendEstimation en el scope
@@ -341,7 +341,7 @@ class PlanningPokerController extends mixOf(taiga.Controller, taiga.PageMixin)
             
             formattedSession = {
                 id: sessionData.id
-                name: sessionData.name or "Sesión " + sessionData.id
+                name: sessionData.name or "Session " + sessionData.id
                 description: sessionData.description or ""
                 user_stories: sessionData.user_stories or []
                 project: sessionData.project
@@ -350,7 +350,7 @@ class PlanningPokerController extends mixOf(taiga.Controller, taiga.PageMixin)
             @scope.sessions.unshift(formattedSession)
             
             # Notificar que se creó la sesión
-            @confirm.notify('success', null, null, "Sesión creada exitosamente")
+            @confirm.notify('success', null, null, "Session created successfully")
             
             @scope.$evalAsync()
 
@@ -916,11 +916,11 @@ class PlanningPokerController extends mixOf(taiga.Controller, taiga.PageMixin)
         sessionId = parseInt(@scope.sessionId)
         
         if not sessionId
-            @confirm.notify('error', null, null, "Debes seleccionar una sesión primero")
+            @confirm.notify('error', null, null, "You must select a session first")
             return
     
         # Mostrar indicador de carga
-        @confirm.notify('success', null, null, "Generando archivo Excel para sesión #{sessionId}...")
+        @confirm.notify('success', null, null, "Generating Excel file for session #{sessionId}...")
         
         # URL del endpoint - Ajustada para Taiga
         url = "/api/v1/planning-poker/planning-sessions/#{@scope.sessionId}/export_excel/"
@@ -975,10 +975,10 @@ class PlanningPokerController extends mixOf(taiga.Controller, taiga.PageMixin)
                             errorMsg = errorData.error or "Error al generar el archivo"
                             @confirm.notify('error', null, null, errorMsg)
                         catch
-                            @confirm.notify('error', null, null, "Error al generar el archivo Excel")
+                            @confirm.notify('error', null, null, "Error generating the Excel file")
                     reader.readAsText(xhr.response)
                 catch
-                    @confirm.notify('error', null, null, "Error al generar el archivo Excel")
+                    @confirm.notify('error', null, null, "Error generating the Excel file")
         
         xhr.onerror = =>
             @confirm.notify('error', null, null, "Error de conexión al generar el archivo")

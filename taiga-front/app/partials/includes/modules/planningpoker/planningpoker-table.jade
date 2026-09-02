@@ -42,7 +42,7 @@ h2(ng-show="memberships.length")
     span  {{filtersRole.name || ("PLANNING_POKER.SECTION_FILTER_ALL" | translate)}}
 
 p(ng-if="!memberships.length", style="color: gray; font-style: italic; margin: 1rem 0;")
-  | No hay más miembros en este proyecto aparte de ti
+  | No other members in this project besides you
 
 //- Selector general de historia para todos los miembros
 div(style="margin: 1rem 0; padding: 0.5rem; display: flex; justify-content: center; align-items: center; background: #f5f5f5; border: 1px solid #ccc; border-radius: 4px;")
@@ -54,19 +54,19 @@ div(style="margin: 1rem 0; padding: 0.5rem; display: flex; justify-content: cent
         ng-show="sessionUserStories && sessionUserStories.length > 0",
         style="padding: 0.4rem; border: 1px solid #ccc; min-width: 250px;"
     )
-        option(value="") Selecciona una historia para todos los miembros...
+        option(value="") Select a story for all team members...
 
     span(ng-show="!sessionUserStories || sessionUserStories.length === 0", style="color: gray; font-style: italic; margin-left: 1rem;")
-        | No hay historias en esta sesión
+        | No stories in this session
     
     //- Botón de actualizar estimaciones - CORREGIDO
     button(
         ng-if="selectedStoryForMembers"
         ng-click="loadEstimations()"
         style="margin-left: 1rem; padding: 0.4rem 0.8rem; background: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer;"
-        title="Actualizar estimaciones"
+        title="Refresh estimates"
     )
-        span Actualizar
+        span Refresh
 
 //- Tabla de miembros del Planning Poker
 section.table-planningpoker.basic-table(
