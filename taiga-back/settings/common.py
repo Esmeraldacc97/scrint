@@ -14,7 +14,7 @@ from datetime import timedelta
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 APPEND_SLASH = False
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'scrint.example.com']
+ALLOWED_HOSTS = ['*']  # LAN de confianza; endurecer si se expone a internet
 
 ADMINS = (
     ("Admin", "example@example.com"),
