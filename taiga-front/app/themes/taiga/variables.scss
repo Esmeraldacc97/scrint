@@ -13,7 +13,7 @@ $secondary-75: lighten($secondary, 20%);
 $secondary-50: lighten($secondary, 40%);
 $secondary-25: lighten($secondary, 60%);
 
-$tertiary: #937a15;       // Amarillo oscuro
+$tertiary: #7a6410;       // Amarillo oscuro
 
 $red:  #FF6363;
 $red-25: #FFA5A5;
@@ -77,8 +77,8 @@ $highlight: #E5F390;
 
 // Primary colors
 $color-solid-primary: #e5be01;  // Color principal (amarillo brillante)
-$color-link-primary: #d3b12e;   // Color secundario (amarillo más oscuro)
-$color-link-tertiary: #c1a442;  // Color terciario (amarillo mostaza)
+$color-link-primary: #8a6d0c;   // Color secundario (amarillo más oscuro)
+$color-link-tertiary: #7a620e;  // Color terciario (amarillo mostaza)
 
 // Grayscale
 $color-gray100: #f1f1f1;        // Gris claro
@@ -87,10 +87,10 @@ $color-gray300: #c0c0c0;        // Gris pálido
 $color-gray400: #a0a0a0;        // Gris intermedio
 $color-gray800: #737373;        // Gris oscuro
 
-$color-black600: #897f69;       // Gris oscuro intermedio
-$color-black700: #9c8b5e;       // Gris oscuro intermedio
-$color-black800: #af9751;       // Gris oscuro
-$color-black900: #c1a442;       // Gris más oscuro
+$color-black600: #6b5f45;       // Gris oscuro intermedio
+$color-black700: #7c6626;       // Gris oscuro intermedio
+$color-black800: #7a6414;       // Gris oscuro
+$color-black900: #6a5610;       // Gris más oscuro
 
 // State colors
 $color-link-red: #E44057;

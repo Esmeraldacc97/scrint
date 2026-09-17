@@ -50,7 +50,7 @@
                                 span.button-text Export to Excel
 
                         div(ng-if="(!sessions || sessions.length === 0) && currentUser.role_name === 'Scrum Master'")
-                            p(style="color: gray; font-style: italic; margin: 0;") No active sessions available.  
+                            p(style="color: #5A5B72; font-style: italic; margin: 0;") No active sessions available.  
 
                         button(
                             ng-if="currentUser.role_name === 'Scrum Master'"
@@ -70,7 +70,7 @@
                     )
                         option(value="") Select a story...
                     
-                    p(ng-show="!sessionUserStories || sessionUserStories.length === 0", style="color: gray; font-style: italic; margin-top: 1.5rem;")
+                    p(ng-show="!sessionUserStories || sessionUserStories.length === 0", style="color: #5A5B72; font-style: italic; margin-top: 1.5rem;")
                         | No stories assigned to this session   
 
                     //- Mensaje específico para Scrum Master
@@ -117,7 +117,7 @@
                                 span(ng-if="$parent.currentEstimations[$parent.selectedStory.id]") Update estimate
 
                     //- Mensaje para roles sin permisos
-                    p(ng-if="currentUser.role_name === 'Product Owner' || currentUser.role_name === 'Scrum Master' || currentUser.role_name === 'Stakeholder'" style="margin-top: 1rem; font-style: italic; color: gray;")
+                    p(ng-if="currentUser.role_name === 'Product Owner' || currentUser.role_name === 'Scrum Master' || currentUser.role_name === 'Stakeholder'" style="margin-top: 1rem; font-style: italic; color: #5A5B72;")
                         | Your role ({{ currentUser.role_name }}) can only view the estimates.
                 
     // Columna Story
